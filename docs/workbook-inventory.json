@@ -1,0 +1,918 @@
+{
+  "source": "COPANEWLOG-HISTÓRIA.xlsx",
+  "sheets": [
+    "PICKS - 11ª EDIÇÃO",
+    "12º EDIÇÃO",
+    "MAIORES NO GERAL",
+    "RANKING GERAL NEWLOG",
+    "TABELAS DAS COPAS",
+    "TIMES E DESTAQUES DAS COPAS",
+    "ESTATISTICAS GERAIS",
+    "BID - 10ª EDIÇÃO"
+  ],
+  "ranking": [
+    {
+      "name": "MADRID FC",
+      "points": 615,
+      "scores": [
+        60,
+        80,
+        40,
+        10,
+        10,
+        30,
+        40,
+        60,
+        80,
+        80,
+        5,
+        80,
+        40
+      ]
+    },
+    {
+      "name": "ATLÉTICO GURIZES",
+      "points": 525,
+      "scores": [
+        100,
+        60,
+        100,
+        15,
+        5,
+        50,
+        null,
+        5,
+        100,
+        60,
+        20,
+        null,
+        10
+      ]
+    },
+    {
+      "name": "RESENHA FTyP",
+      "points": 430,
+      "scores": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        50,
+        80,
+        null,
+        20,
+        100,
+        100,
+        80
+      ]
+    },
+    {
+      "name": "INIMIGOS DA BOLA",
+      "points": 380,
+      "scores": [
+        80,
+        100,
+        60,
+        40,
+        20,
+        null,
+        null,
+        10,
+        60,
+        10,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "name": "CORAGEM NACIONAL",
+      "points": 335,
+      "scores": [
+        null,
+        null,
+        20,
+        5,
+        60,
+        null,
+        null,
+        40,
+        40,
+        null,
+        10,
+        60,
+        100
+      ]
+    },
+    {
+      "name": "PUMAS FUT 7",
+      "points": 280,
+      "scores": [
+        null,
+        null,
+        null,
+        30,
+        40,
+        20,
+        30,
+        20,
+        null,
+        100,
+        40,
+        null,
+        null
+      ]
+    },
+    {
+      "name": "DEPORTIVO SANTA MARIA",
+      "points": 250,
+      "scores": [
+        40,
+        20,
+        80,
+        null,
+        null,
+        40,
+        null,
+        null,
+        null,
+        40,
+        30,
+        null,
+        null
+      ]
+    },
+    {
+      "name": "PELADEIROS FC",
+      "points": 160,
+      "scores": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        100,
+        null,
+        null,
+        60,
+        null,
+        null
+      ]
+    },
+    {
+      "name": "300 PRIME",
+      "points": 150,
+      "scores": [
+        null,
+        null,
+        null,
+        50,
+        100,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "name": "RESENHA CELESTES",
+      "points": 110,
+      "scores": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        80,
+        null,
+        30
+      ]
+    },
+    {
+      "name": "GLV",
+      "points": 100,
+      "scores": [
+        null,
+        null,
+        null,
+        20,
+        80,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "name": "MERCENÁRIOS",
+      "points": 60,
+      "scores": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        40,
+        20
+      ]
+    },
+    {
+      "name": "MURARI SPORTS",
+      "points": 60,
+      "scores": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        60
+      ]
+    },
+    {
+      "name": "TRUPE SM",
+      "points": 5,
+      "scores": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        5
+      ]
+    }
+  ],
+  "players": {
+    "participations": [
+      {
+        "position": 1,
+        "name": "FERNANDO",
+        "value": 10
+      },
+      {
+        "position": 2,
+        "name": "MATTEUS",
+        "value": 10
+      },
+      {
+        "position": 3,
+        "name": "HOLKEM",
+        "value": 9
+      },
+      {
+        "position": 4,
+        "name": "LUFEL",
+        "value": 9
+      },
+      {
+        "position": 5,
+        "name": "RAFAEL CAMARGO",
+        "value": 8
+      },
+      {
+        "position": 6,
+        "name": "RUIVO",
+        "value": 8
+      },
+      {
+        "position": 7,
+        "name": "BRUNO",
+        "value": 7
+      },
+      {
+        "position": 8,
+        "name": "BRUNO ENNES",
+        "value": 7
+      },
+      {
+        "position": 9,
+        "name": "LUCAS PADYLHA",
+        "value": 7
+      },
+      {
+        "position": 10,
+        "name": "CARLOS",
+        "value": 6
+      },
+      {
+        "position": 11,
+        "name": "GABRIEL VARGAS",
+        "value": 6
+      }
+    ],
+    "goals": [
+      {
+        "position": 1,
+        "name": "LUCAS PADYLHA",
+        "value": 20
+      },
+      {
+        "position": 2,
+        "name": "ZÉ",
+        "value": 17
+      },
+      {
+        "position": 3,
+        "name": "RODRIGO",
+        "value": 13
+      },
+      {
+        "position": 4,
+        "name": "THIAGO SOBROSA",
+        "value": 12
+      },
+      {
+        "position": 5,
+        "name": "RUIVO",
+        "value": 11
+      },
+      {
+        "position": 6,
+        "name": "ADRIANO",
+        "value": 11
+      },
+      {
+        "position": 7,
+        "name": "JOSÉ JESUS",
+        "value": 11
+      },
+      {
+        "position": 8,
+        "name": "JACKSON",
+        "value": 10
+      },
+      {
+        "position": 9,
+        "name": "GUILHERME DIAS",
+        "value": 10
+      },
+      {
+        "position": 10,
+        "name": "HOLKEM",
+        "value": 9
+      },
+      {
+        "position": 11,
+        "name": "STECKEL",
+        "value": 9
+      }
+    ],
+    "assists": [],
+    "value": []
+  },
+  "competitions": [
+    {
+      "edition": 1,
+      "year": 2022,
+      "label": "1ºCOPA - 2022",
+      "highlights": [
+        {
+          "role": "GL",
+          "name": "CHARÃO"
+        },
+        {
+          "role": "ZG",
+          "name": "RAFAEL"
+        },
+        {
+          "role": "ZG",
+          "name": "SERAPIO"
+        },
+        {
+          "role": "AL",
+          "name": "MATTEUS"
+        },
+        {
+          "role": "AL",
+          "name": "BRUNO"
+        },
+        {
+          "role": "MC",
+          "name": "ZÉ"
+        },
+        {
+          "role": "MC",
+          "name": "LUFEL"
+        },
+        {
+          "role": "MC",
+          "name": "THIAGO"
+        },
+        {
+          "role": "AT",
+          "name": "JACKSON"
+        },
+        {
+          "role": "AT",
+          "name": "RODRIGO"
+        },
+        {
+          "role": "AT",
+          "name": "FERNANDO"
+        }
+      ]
+    },
+    {
+      "edition": 2,
+      "year": 2022,
+      "label": "2ºCOPA - 2022",
+      "highlights": [
+        {
+          "role": "GL",
+          "name": "CHARÃO"
+        },
+        {
+          "role": "ZG",
+          "name": "SERAPIO"
+        },
+        {
+          "role": "ZG",
+          "name": "CARLOS"
+        },
+        {
+          "role": "AL",
+          "name": "MATTEUS"
+        },
+        {
+          "role": "AL",
+          "name": "STECKEL"
+        },
+        {
+          "role": "MC",
+          "name": "CAETANO"
+        },
+        {
+          "role": "MC",
+          "name": "ALEX"
+        },
+        {
+          "role": "MC",
+          "name": "HOLKEM"
+        },
+        {
+          "role": "AT",
+          "name": "THIAGO"
+        },
+        {
+          "role": "AT",
+          "name": "RODRIGO"
+        },
+        {
+          "role": "AT",
+          "name": "ALISSON"
+        }
+      ]
+    },
+    {
+      "edition": 3,
+      "year": 2022,
+      "label": "3ºCOPA - 2022",
+      "highlights": [
+        {
+          "role": "GL",
+          "name": "LUCAS SEVERO"
+        },
+        {
+          "role": "ZG",
+          "name": "PORTELLA"
+        },
+        {
+          "role": "ZG",
+          "name": "ALEX"
+        },
+        {
+          "role": "AL",
+          "name": "BRUNO ENNES"
+        },
+        {
+          "role": "AL",
+          "name": "BRUNO"
+        },
+        {
+          "role": "MC",
+          "name": "ZÉ"
+        },
+        {
+          "role": "MC",
+          "name": "ALEXSANDER"
+        },
+        {
+          "role": "MC",
+          "name": "OCTÁVIO"
+        },
+        {
+          "role": "AT",
+          "name": "JACKSON"
+        },
+        {
+          "role": "AT",
+          "name": "CASSIANO"
+        },
+        {
+          "role": "AT",
+          "name": "ADRIANO"
+        }
+      ]
+    },
+    {
+      "edition": 4,
+      "year": 2023,
+      "label": "4ºCOPA - 2023",
+      "highlights": [
+        {
+          "role": "GL",
+          "name": "TITO"
+        },
+        {
+          "role": "ZG",
+          "name": "TOM"
+        },
+        {
+          "role": "ZG",
+          "name": "CARVALHO"
+        },
+        {
+          "role": "AL",
+          "name": "DEDY"
+        },
+        {
+          "role": "AL",
+          "name": "GABRIEL VARGAS"
+        },
+        {
+          "role": "MC",
+          "name": "FELIPE TONETTO"
+        },
+        {
+          "role": "MC",
+          "name": "NATHAN"
+        },
+        {
+          "role": "MC",
+          "name": "ERIC"
+        },
+        {
+          "role": "AT",
+          "name": "GABRIEL URH"
+        },
+        {
+          "role": "AT",
+          "name": "E. GUTERRES"
+        },
+        {
+          "role": "AT",
+          "name": "IAGO"
+        }
+      ]
+    },
+    {
+      "edition": 5,
+      "year": 2023,
+      "label": "5ºCOPA - 2023",
+      "highlights": [
+        {
+          "role": "GL",
+          "name": "CASSÃO"
+        },
+        {
+          "role": "ZG",
+          "name": "LUCAS CORRÊA"
+        },
+        {
+          "role": "AL",
+          "name": "ELISANDRO"
+        },
+        {
+          "role": "AL",
+          "name": "ELISANDRO"
+        },
+        {
+          "role": "MC",
+          "name": "MARCOS PARISE"
+        },
+        {
+          "role": "AT",
+          "name": "JESSÉ"
+        },
+        {
+          "role": "AT",
+          "name": "JOSÉ DE JESUS"
+        },
+        {
+          "role": "TC",
+          "name": "JESSÉ"
+        },
+        {
+          "role": "ART",
+          "name": "JOSÉ DE JESUS"
+        },
+        {
+          "role": "ASS",
+          "name": "JOSÉ DE JESUS"
+        },
+        {
+          "role": "CRA",
+          "name": "MARCOS PARISE"
+        }
+      ]
+    },
+    {
+      "edition": 6,
+      "year": 2023,
+      "label": "6ºCOPA - 2023",
+      "highlights": [
+        {
+          "role": "GL",
+          "name": "TOM"
+        },
+        {
+          "role": "ZG",
+          "name": "CRISTIAN"
+        },
+        {
+          "role": "ZG",
+          "name": "HOLKEM"
+        },
+        {
+          "role": "AL",
+          "name": "RUIVO"
+        },
+        {
+          "role": "AL",
+          "name": "BARIN"
+        },
+        {
+          "role": "MC",
+          "name": "BRUNO VIEIRA"
+        },
+        {
+          "role": "MC",
+          "name": "GABRIEL URH"
+        },
+        {
+          "role": "MC",
+          "name": "GUILHERME"
+        },
+        {
+          "role": "AT",
+          "name": "SERRANO"
+        },
+        {
+          "role": "AT",
+          "name": "GUILHERME DIAS"
+        },
+        {
+          "role": "AT",
+          "name": "VINICIUS"
+        }
+      ]
+    },
+    {
+      "edition": 7,
+      "year": 2025,
+      "label": "7ºCOPA - 2025",
+      "highlights": [
+        {
+          "role": "GL",
+          "name": "JULIANO"
+        },
+        {
+          "role": "ZG",
+          "name": "VITOR JACARÉ"
+        },
+        {
+          "role": "ZG",
+          "name": "CARLOS"
+        },
+        {
+          "role": "ZG",
+          "name": "VINICIUS MICHELS"
+        },
+        {
+          "role": "MC",
+          "name": "FÁBIO"
+        },
+        {
+          "role": "MC",
+          "name": "DUTRA"
+        },
+        {
+          "role": "MC",
+          "name": "JOSÉ DE JESUS"
+        },
+        {
+          "role": "MC",
+          "name": "CARDOZO"
+        },
+        {
+          "role": "AT",
+          "name": "MATHEUS PAHIM"
+        },
+        {
+          "role": "AT",
+          "name": "LÉO DOMINGUES"
+        },
+        {
+          "role": "AT",
+          "name": "IGOR"
+        }
+      ]
+    },
+    {
+      "edition": 8,
+      "year": 2025,
+      "label": "8ºCOPA - 2025",
+      "highlights": [
+        {
+          "role": "GL",
+          "name": "CASSÃO"
+        },
+        {
+          "role": "ZG",
+          "name": "RIGUI"
+        },
+        {
+          "role": "ZG",
+          "name": "ANDERSON RATO"
+        },
+        {
+          "role": "ZG",
+          "name": "MATHEUS BIANCHI"
+        },
+        {
+          "role": "MC",
+          "name": "RAFINHA"
+        },
+        {
+          "role": "MC",
+          "name": "JOSÉ DE JESUS"
+        },
+        {
+          "role": "MC",
+          "name": "NATHAN"
+        },
+        {
+          "role": "MC",
+          "name": "GABRIEL VARGAS"
+        },
+        {
+          "role": "MC",
+          "name": "RUIVO"
+        },
+        {
+          "role": "AT",
+          "name": "LUIZ RAFAEL"
+        },
+        {
+          "role": "AT",
+          "name": "LUCAS PADYLHA"
+        }
+      ]
+    },
+    {
+      "edition": 9,
+      "year": 2026,
+      "label": "9ºCOPA - 2026",
+      "highlights": [
+        {
+          "role": "GL",
+          "name": "ANDRIO"
+        },
+        {
+          "role": "ZG",
+          "name": "FERNANDO"
+        },
+        {
+          "role": "ZG",
+          "name": "LUCAS SAVIAN"
+        },
+        {
+          "role": "ZG",
+          "name": "RIGHI"
+        },
+        {
+          "role": "MC",
+          "name": "LUCAS CORRÊA"
+        },
+        {
+          "role": "MC",
+          "name": "DENIS"
+        },
+        {
+          "role": "MC",
+          "name": "CRISTIAN"
+        },
+        {
+          "role": "MC",
+          "name": "LEANDRO VINICIUS"
+        },
+        {
+          "role": "AT",
+          "name": "DAVI"
+        },
+        {
+          "role": "AT",
+          "name": "ADRIANO"
+        },
+        {
+          "role": "AT",
+          "name": "LUCAS PADYLHA"
+        }
+      ]
+    },
+    {
+      "edition": 10,
+      "year": 2026,
+      "label": "10ºCOPA - 2026",
+      "highlights": [
+        {
+          "role": "GL",
+          "name": "IGOR AMARAL"
+        },
+        {
+          "role": "ZG",
+          "name": "LUCAS LOPES"
+        },
+        {
+          "role": "ZG",
+          "name": "CARLOS"
+        },
+        {
+          "role": "ZG",
+          "name": "PELISSER"
+        },
+        {
+          "role": "MC",
+          "name": "LUCAS GRECO"
+        },
+        {
+          "role": "MC",
+          "name": "JOSÉ DE JESUS"
+        },
+        {
+          "role": "MC",
+          "name": "RAFAEL"
+        },
+        {
+          "role": "MC",
+          "name": "MARQUINHOS"
+        },
+        {
+          "role": "MC",
+          "name": "WILLIAM GABRIEL"
+        },
+        {
+          "role": "AT",
+          "name": "MARLON"
+        },
+        {
+          "role": "AT",
+          "name": "PETIM"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "historicalCups": 10,
+    "laterEditions": [
+      "11ª EDIÇÃO",
+      "12º EDIÇÃO"
+    ]
+  }
+}

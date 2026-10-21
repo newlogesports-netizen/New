@@ -65,11 +65,15 @@ export default function Home() {
           <div className="hero__grid-lines" />
           <div className="hero__orb hero__orb--one" />
           <div className="hero__orb hero__orb--two" />
-          <img
-            src="/manus-storage/logo-newlog_e6e17fc4.png"
-            alt="Logo oficial Newlog Esportes"
-            className="hero__logo"
-          />
+          <div className="hero__wordmark" aria-hidden="true">
+            <span>NEWLOG</span>
+            <em>ESPORTES</em>
+          </div>
+          <div className="hero__field-mark" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
           <div className="hero__stamp">
             <span>NL</span>
             <small>

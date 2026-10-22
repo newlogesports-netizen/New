@@ -3,14 +3,14 @@
 @import "tw-animate-css";
 
 :root {
-  --ink: #11131a;
-  --night: #080b1d;
-  --panel: #101633;
-  --panel-2: #17224a;
-  --paper: #f4f5f7;
+  --ink: #0f0b5f;
+  --night: #0f0b5f;
+  --panel: #11156e;
+  --panel-2: #1b237d;
+  --paper: #f7faff;
   --white: #fff;
-  --muted: #747c8c;
-  --line: rgba(15, 11, 95, 0.15);
+  --muted: #5d6c86;
+  --line: rgba(15, 11, 95, 0.18);
   --violet: #0f0b5f;
   --violet-bright: #8fbce8;
   --lime: #c9e7ff;
@@ -76,7 +76,7 @@ a {
   top: 0;
   z-index: 20;
   height: 78px;
-  background: rgba(244, 243, 239, 0.92);
+  background: rgba(247, 250, 255, 0.94);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(14px);
 }
@@ -126,7 +126,7 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: #5a5b65;
+  color: #405174;
   font-size: 13px;
   font-weight: 700;
   transition: color 0.2s;
@@ -220,7 +220,7 @@ a {
 .hero p {
   max-width: 470px;
   margin: 0;
-  color: #646671;
+  color: #425475;
   font-size: 17px;
 }
 .hero__actions {
@@ -776,7 +776,7 @@ a {
   min-height: 250px;
   padding: 26px;
   overflow: hidden;
-  background: #e6e5e2;
+  background: #e8f1fb;
 }
 .leader-card--featured {
   color: var(--white);
@@ -1029,7 +1029,7 @@ a {
 .highlight-chips span {
   padding: 5px 8px;
   color: #676876;
-  background: #e7e6e2;
+  background: #e4eef9;
   font-size: 10px;
   font-weight: 700;
 }
@@ -1045,7 +1045,7 @@ a {
 }
 .aside-card {
   padding: 25px;
-  background: #e6e5e2;
+  background: #e8f1fb;
 }
 .aside-card--dark {
   color: var(--white);
@@ -1170,7 +1170,7 @@ a {
 }
 .rank-badge--3 {
   color: var(--violet);
-  background: #e5e3dd;
+  background: #edf3fa;
 }
 .ranking-team {
   display: flex;
@@ -1192,11 +1192,11 @@ a {
 }
 .score-cells span {
   padding-block: 7px;
-  background: #e8e7e2;
+  background: #eaf2fa;
 }
 .score-cells .is-empty {
   color: #aaaab0;
-  background: #efeeeb;
+  background: #f2f7fc;
 }
 .ranking-total {
   display: flex;
@@ -1258,7 +1258,7 @@ a {
   padding: 4px;
   width: fit-content;
   margin-bottom: 25px;
-  background: #e7e6e2;
+  background: #e4eef9;
 }
 .metric-tabs button {
   display: inline-flex;
@@ -1455,7 +1455,7 @@ a {
 .about-facts > div:nth-child(3) {
   grid-column: 1/-1;
   color: var(--ink);
-  background: #e8e7e2;
+  background: #eaf2fa;
 }
 .about-facts svg {
   margin-bottom: 25px;
@@ -1812,7 +1812,7 @@ a {
   width: 100%;
   padding: 12px;
   color: var(--ink);
-  background: #f8f8f6;
+  background: #f8fbff;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   outline: 0;
@@ -1832,7 +1832,7 @@ a {
 }
 .editor-sidebar {
   padding: 20px;
-  background: #e7e6e2;
+  background: #e4eef9;
 }
 .editor-sidebar > span {
   margin-bottom: 13px;
@@ -1901,7 +1901,7 @@ a {
   aspect-ratio: 1;
   place-items: center;
   margin-bottom: 10px;
-  background: #f0f0ed;
+  background: #f3f8fd;
 }
 .media-card__thumb img {
   width: 82%;

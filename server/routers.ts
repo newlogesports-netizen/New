@@ -45,6 +45,43 @@ const publicationInput = z.object({
   status: z.enum(["draft", "published", "archived"]),
 });
 
+const menuInput = z.object({
+  id: z.number().optional(),
+  name: z.string().min(2).max(160),
+  location: z.string().min(2).max(80),
+  items: z
+    .array(
+      z
+        .object({ label: z.string().max(120), href: z.string().max(300) })
+        .strict()
+    )
+    .max(40),
+  status: z.enum(["draft", "published", "archived"]),
+});
+
+const formInput = z.object({
+  id: z.number().optional(),
+  name: z.string().min(2).max(160),
+  slug: z
+    .string()
+    .min(2)
+    .max(160)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  fields: z
+    .array(
+      z
+        .object({
+          name: z.string().max(80),
+          label: z.string().max(120),
+          type: z.enum(["text", "email", "textarea", "tel"]),
+        })
+        .strict()
+    )
+    .max(30),
+  notificationEmail: z.string().email().max(320).optional(),
+  active: z.boolean(),
+});
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -61,12 +98,19 @@ export const appRouter = router({
   admin: router({
     dashboard: adminProcedure.query(() => db.getAdminDashboard()),
     users: adminProcedure.query(() => db.getAdminUsers()),
+    modules: adminProcedure.query(() => db.getAdminContentModules()),
     savePage: adminProcedure
       .input(pageInput)
       .mutation(({ input, ctx }) => db.savePage(input, ctx.user.id)),
     savePublication: adminProcedure
       .input(publicationInput)
       .mutation(({ input, ctx }) => db.savePublication(input, ctx.user.id)),
+    saveMenu: adminProcedure
+      .input(menuInput)
+      .mutation(({ input, ctx }) => db.saveMenu(input, ctx.user.id)),
+    saveForm: adminProcedure
+      .input(formInput)
+      .mutation(({ input, ctx }) => db.saveForm(input, ctx.user.id)),
     updateSetting: adminProcedure
       .input(
         z.object({

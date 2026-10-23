@@ -120,6 +120,49 @@ export const publications = mysqlTable("publications", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+export const menus = mysqlTable("menus", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 160 }).notNull(),
+  location: varchar("location", { length: 80 }).notNull().default("primary"),
+  items: json("items").notNull(),
+  status: mysqlEnum("status", ["draft", "published", "archived"])
+    .default("published")
+    .notNull(),
+  updatedBy: int("updatedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const forms = mysqlTable("forms", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 160 }).notNull(),
+  slug: varchar("slug", { length: 160 }).notNull().unique(),
+  fields: json("fields").notNull(),
+  notificationEmail: varchar("notificationEmail", { length: 320 }),
+  active: int("active").default(1).notNull(),
+  createdBy: int("createdBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const formSubmissions = mysqlTable("form_submissions", {
+  id: int("id").autoincrement().primaryKey(),
+  formId: int("formId").notNull(),
+  data: json("data").notNull(),
+  readAt: timestamp("readAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const revisions = mysqlTable("revisions", {
+  id: int("id").autoincrement().primaryKey(),
+  entityType: varchar("entityType", { length: 40 }).notNull(),
+  entityId: int("entityId").notNull(),
+  version: int("version").notNull(),
+  snapshot: json("snapshot").notNull(),
+  createdBy: int("createdBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export const mediaAssets = mysqlTable("media_assets", {
   id: int("id").autoincrement().primaryKey(),
   title: varchar("title", { length: 220 }).notNull(),
@@ -160,3 +203,5 @@ export type RankingEntry = typeof rankingEntries.$inferSelect;
 export type Player = typeof players.$inferSelect;
 export type Competition = typeof competitions.$inferSelect;
 export type Publication = typeof publications.$inferSelect;
+export type Menu = typeof menus.$inferSelect;
+export type Form = typeof forms.$inferSelect;

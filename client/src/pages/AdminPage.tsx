@@ -6,8 +6,10 @@ import {
   ChevronRight,
   FileImage,
   FileSpreadsheet,
+  Inbox,
   LayoutDashboard,
   LogIn,
+  List,
   Menu as MenuIcon,
   PenSquare,
   Save,
@@ -28,6 +30,8 @@ const adminSections = [
   ["Páginas", "pages", BookOpen],
   ["Publicações", "posts", PenSquare],
   ["Mídia", "media", FileImage],
+  ["Menus", "menus", List],
+  ["Formulários", "forms", Inbox],
   ["Aparência", "appearance", Settings2],
   ["Usuários", "users", Users],
 ] as const;
@@ -175,6 +179,33 @@ export default function AdminPage() {
     enabled: isAdmin,
     retry: false,
   });
+  const modulesQuery = trpc.admin.modules.useQuery(undefined, {
+    enabled: isAdmin,
+    retry: false,
+  });
+  const [menuName, setMenuName] = useState("Menu principal");
+  const [menuItems, setMenuItems] = useState(
+    "Início | /\nHistória | /historia\nRanking | /ranking"
+  );
+  const [formName, setFormName] = useState("Contato");
+  const [formSlug, setFormSlug] = useState("contato");
+  const [formFields, setFormFields] = useState(
+    "Nome | text\nE-mail | email\nMensagem | textarea"
+  );
+  const saveMenu = trpc.admin.saveMenu.useMutation({
+    onSuccess: () => {
+      toast.success("Menu salvo no banco de dados.");
+      modulesQuery.refetch();
+    },
+    onError: error => toast.error(error.message),
+  });
+  const saveForm = trpc.admin.saveForm.useMutation({
+    onSuccess: () => {
+      toast.success("Formulário salvo no banco de dados.");
+      modulesQuery.refetch();
+    },
+    onError: error => toast.error(error.message),
+  });
   const settings = snapshot.data?.settings ?? {};
   useEffect(() => {
     if (settings.instagram_url && !instagram)
@@ -285,6 +316,34 @@ export default function AdminPage() {
       excerpt: postExcerpt,
       content: postContent,
       status,
+    });
+  const handleSaveMenu = () =>
+    saveMenu.mutate({
+      name: menuName,
+      location: "primary",
+      status: "published",
+      items: menuItems
+        .split("\n")
+        .map(line => line.split("|").map(value => value.trim()))
+        .filter(parts => parts.length === 2 && parts[0] && parts[1])
+        .map(([label, href]) => ({ label, href })),
+    });
+  const handleSaveForm = () =>
+    saveForm.mutate({
+      name: formName,
+      slug: formSlug,
+      active: true,
+      fields: formFields
+        .split("\n")
+        .map(line => line.split("|").map(value => value.trim()))
+        .filter(parts => parts.length === 2 && parts[0] && parts[1])
+        .map(([label, type]) => ({
+          name: label.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+          label,
+          type: ["text", "email", "textarea", "tel"].includes(type)
+            ? (type as "text" | "email" | "textarea" | "tel")
+            : "text",
+        })),
     });
 
   return (
@@ -566,6 +625,91 @@ export default function AdminPage() {
                   </small>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+        {active === "menus" && (
+          <div className="admin-editor">
+            <div className="admin-heading">
+              <div>
+                <span className="eyebrow">Navegação</span>
+                <h2>Menus do site.</h2>
+                <p>Edite os links do menu principal sem alterar o código.</p>
+              </div>
+            </div>
+            <div className="editor-canvas">
+              <label>
+                Nome do menu
+                <input
+                  value={menuName}
+                  onChange={event => setMenuName(event.target.value)}
+                />
+              </label>
+              <label>
+                Itens — um por linha no formato <code>Texto | /rota</code>
+                <textarea
+                  rows={8}
+                  value={menuItems}
+                  onChange={event => setMenuItems(event.target.value)}
+                />
+              </label>
+              <button
+                className="button button--primary"
+                onClick={handleSaveMenu}
+                disabled={saveMenu.isPending}
+              >
+                <Save size={15} /> Salvar menu
+              </button>
+              <small>
+                {modulesQuery.data?.menus.length ?? 0} menu(s) salvo(s)
+              </small>
+            </div>
+          </div>
+        )}
+        {active === "forms" && (
+          <div className="admin-editor">
+            <div className="admin-heading">
+              <div>
+                <span className="eyebrow">Conversão</span>
+                <h2>Formulários.</h2>
+                <p>
+                  Crie formulários simples para contato e futuras captações.
+                </p>
+              </div>
+            </div>
+            <div className="editor-canvas">
+              <label>
+                Nome
+                <input
+                  value={formName}
+                  onChange={event => setFormName(event.target.value)}
+                />
+              </label>
+              <label>
+                Slug
+                <input
+                  value={formSlug}
+                  onChange={event => setFormSlug(event.target.value)}
+                />
+              </label>
+              <label>
+                Campos — um por linha no formato <code>Rótulo | tipo</code>
+                <textarea
+                  rows={8}
+                  value={formFields}
+                  onChange={event => setFormFields(event.target.value)}
+                />
+              </label>
+              <button
+                className="button button--primary"
+                onClick={handleSaveForm}
+                disabled={saveForm.isPending}
+              >
+                <Save size={15} /> Salvar formulário
+              </button>
+              <small>
+                {modulesQuery.data?.forms.length ?? 0} formulário(s) salvo(s)
+              </small>
             </div>
           </div>
         )}

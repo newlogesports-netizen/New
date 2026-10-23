@@ -5,6 +5,8 @@ import {
   auditLogs,
   competitions,
   importJobs,
+  forms,
+  menus,
   mediaAssets,
   pages,
   players,
@@ -538,4 +540,70 @@ export async function getAdminUsers() {
     })
     .from(users)
     .orderBy(desc(users.lastSignedIn));
+}
+
+export async function getAdminContentModules() {
+  const db = await getDb();
+  if (!db) return { menus: [], forms: [], submissions: [] };
+  const [menuRows, formRows] = await Promise.all([
+    db.select().from(menus).orderBy(desc(menus.updatedAt)),
+    db.select().from(forms).orderBy(desc(forms.updatedAt)),
+  ]);
+  return { menus: menuRows, forms: formRows, submissions: [] };
+}
+
+export async function saveMenu(
+  input: {
+    id?: number;
+    name: string;
+    location: string;
+    items: unknown;
+    status: "draft" | "published" | "archived";
+  },
+  userId?: number
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const payload = {
+    name: input.name,
+    location: input.location,
+    items: input.items,
+    status: input.status,
+    updatedBy: userId ?? null,
+  };
+  if (input.id) {
+    await db.update(menus).set(payload).where(eq(menus.id, input.id));
+    return { id: input.id, ...payload };
+  }
+  const result = await db.insert(menus).values(payload);
+  return { id: Number(result[0].insertId), ...payload };
+}
+
+export async function saveForm(
+  input: {
+    id?: number;
+    name: string;
+    slug: string;
+    fields: unknown;
+    notificationEmail?: string;
+    active: boolean;
+  },
+  userId?: number
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const payload = {
+    name: input.name,
+    slug: input.slug,
+    fields: input.fields,
+    notificationEmail: input.notificationEmail ?? null,
+    active: input.active ? 1 : 0,
+    createdBy: userId ?? null,
+  };
+  if (input.id) {
+    await db.update(forms).set(payload).where(eq(forms.id, input.id));
+    return { id: input.id, ...payload };
+  }
+  const result = await db.insert(forms).values(payload);
+  return { id: Number(result[0].insertId), ...payload };
 }

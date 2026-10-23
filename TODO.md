@@ -19,7 +19,7 @@
 
 - [x] Proteger `/admin` com autenticação real do starter e autorização no servidor.
 - [x] Exibir dashboard com contagens e atividade consultadas do banco, sem números inventados.
-- [ ] Permitir administrar páginas, publicações, mídia, menus, aparência, configurações e equipes por meio de módulos reais.
+- [x] Permitir administrar páginas, publicações, mídia, menus, aparência, configurações e equipes por meio de módulos reais.
 - [x] Implementar perfis e permissões no servidor, sem permitir que dados do navegador promovam um usuário.
 - [ ] Permitir editar o Instagram, SEO, logo, favicon, cores, cabeçalho, rodapé e marca-d'água quando configurada. (Instagram e descrição estão funcionais; os demais campos permanecem preparados.)
 
@@ -31,7 +31,7 @@
 
 ## 5. Dados, importação e persistência
 
-- [ ] Modelar tabelas relacionais para configurações, páginas, versões, blocos, publicações, mídia, menus, equipes, jogadores, competições, ranking, importações e auditoria.
+- [x] Modelar tabelas relacionais para configurações, páginas, versões, blocos, publicações, mídia, menus, equipes, jogadores, competições, ranking, importações e auditoria.
 - [x] Manter migrações aditivas, documentadas e reproduzíveis; não apagar tabelas existentes.
 - [ ] Registrar aba, coluna, origem e pendências da planilha e preparar pré-visualização de importação com validação e idempotência. (Inventário, origem e seed idempotente estão prontos; a UI de pré-visualização ainda está aberta.)
 - [x] Fazer o conteúdo publicado persistir no banco gerenciado; localStorage não substitui o banco.

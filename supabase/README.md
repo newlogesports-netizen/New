@@ -1,6 +1,6 @@
 # Supabase — CMS independente da Newlog
 
-A pasta `migrations/` contém o banco do CMS reconstruído fora do WordPress. Ela não executa plugins do WordPress: fornece equivalentes independentes para páginas, posts, editor por blocos, mídia, menus, SEO, categorias, tags, formulários, revisões, usuários, permissões, importação, equipes, ranking, jogadores, Copas e auditoria.
+A pasta `migrations/` contém o banco do CMS criado do zero. O projeto não executa WordPress nem plugins: fornece recursos independentes para páginas, posts, editor por blocos, mídia, menus, SEO, categorias, tags, formulários, revisões, usuários, permissões, importação, equipes, ranking, jogadores, Copas e auditoria.
 
 ## Como conectar
 
@@ -19,4 +19,4 @@ where id = 'UUID_DO_USUARIO';
 
 O arquivo SQL usa RLS para separar leitura pública de conteúdo publicado e edição administrativa autenticada. A senha fica exclusivamente no Supabase Auth; o CMS não salva senhas próprias.
 
-A migração do conteúdo e das funções específicas do WordPress será feita depois que o backup do WordPress for fornecido (`.sql`, `.xml`, `wp-content`, tema e plugins).
+O conteúdo inicial da Newlog é alimentado pelos materiais oficiais enviados para este projeto: logo, escudos, fotos e planilha histórica. Não existe etapa de migração de WordPress.

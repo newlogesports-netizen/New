@@ -1,5 +1,5 @@
 import { ArrowUpRight, Instagram, Menu, Shield, X } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { INSTAGRAM_URL, OFFICIAL_LOGO } from "@shared/newlogData";
 import { trpc } from "@/lib/trpc";
@@ -12,6 +12,19 @@ const navItems = [
   ["Copas", "/copas"],
 ] as const;
 
+function publicMenuItems(value: unknown) {
+  const fallback = navItems.map(([label, href]) => ({ label, href }));
+  if (!Array.isArray(value)) return fallback;
+  const items = value.filter(
+    (item): item is { label: string; href: string } =>
+      typeof item === "object" &&
+      item !== null &&
+      typeof (item as { label?: unknown }).label === "string" &&
+      typeof (item as { href?: unknown }).href === "string"
+  );
+  return items.length ? items : fallback;
+}
+
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const snapshot = trpc.public.snapshot.useQuery(undefined, {
@@ -19,6 +32,10 @@ export function SiteHeader() {
   });
   const logo = snapshot.data?.settings.logo_url || OFFICIAL_LOGO;
   const instagram = snapshot.data?.settings.instagram_url || INSTAGRAM_URL;
+  const primaryMenu = snapshot.data?.menus?.find(
+    menu => menu.location === "primary"
+  );
+  const links = publicMenuItems(primaryMenu?.items);
   return (
     <header className="site-header">
       <div className="site-header__inner shell">
@@ -32,9 +49,13 @@ export function SiteHeader() {
           className={`site-nav ${open ? "site-nav--open" : ""}`}
           aria-label="Navegação principal"
         >
-          {navItems.map(([label, href]) => (
-            <Link key={href} href={href} onClick={() => setOpen(false)}>
-              {label}
+          {links.map(item => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setOpen(false)}
+            >
+              {item.label}
             </Link>
           ))}
           <Link
@@ -118,6 +139,36 @@ export function SiteFooter() {
 }
 
 export function SiteShell({ children }: { children: ReactNode }) {
+  const snapshot = trpc.public.snapshot.useQuery(undefined, {
+    staleTime: 60_000,
+  });
+  useEffect(() => {
+    const title = snapshot.data?.settings.site_name || "Newlog Esportes";
+    const description =
+      snapshot.data?.settings.site_description ||
+      "Arquivo oficial Newlog Esportes.";
+    document.title = title;
+    let meta = document.querySelector('meta[name="description"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "description");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", description);
+    const root = document.documentElement;
+    if (snapshot.data?.settings.primary_color)
+      root.style.setProperty("--violet", snapshot.data.settings.primary_color);
+    if (snapshot.data?.settings.accent_color)
+      root.style.setProperty(
+        "--violet-bright",
+        snapshot.data.settings.accent_color
+      );
+  }, [
+    snapshot.data?.settings.site_name,
+    snapshot.data?.settings.site_description,
+    snapshot.data?.settings.primary_color,
+    snapshot.data?.settings.accent_color,
+  ]);
   return (
     <div className="site-shell">
       <SiteHeader />

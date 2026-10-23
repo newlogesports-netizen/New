@@ -417,6 +417,101 @@ export function AboutPage() {
   );
 }
 
+export function ContactPage() {
+  const snapshot = trpc.public.snapshot.useQuery(undefined, {
+    staleTime: 60_000,
+  });
+  const form = snapshot.data?.forms?.[0];
+  const fields = Array.isArray(form?.fields)
+    ? form.fields
+    : [
+        { name: "nome", label: "Nome", type: "text" },
+        { name: "email", label: "E-mail", type: "email" },
+        { name: "mensagem", label: "Mensagem", type: "textarea" },
+      ];
+  const [values, setValues] = useState<Record<string, string>>({});
+  const submit = trpc.public.submitForm.useMutation({
+    onSuccess: () => setValues({}),
+  });
+  return (
+    <>
+      <PageIntro
+        kicker="Fale com a Newlog"
+        title="Entre em contato com a organização."
+        text="Envie uma mensagem pelo formulário oficial. O contato será recebido no painel administrativo."
+      />
+      <section className="shell contact-layout">
+        <div>
+          <span className="eyebrow">Canal oficial</span>
+          <h2>Uma mensagem, uma próxima rodada.</h2>
+          <p className="muted-text">
+            Os campos deste formulário são administráveis no CMS. Nenhuma
+            informação é armazenada no navegador.
+          </p>
+        </div>
+        <form
+          className="public-form"
+          onSubmit={event => {
+            event.preventDefault();
+            submit.mutate({ slug: form?.slug ?? "contato", data: values });
+          }}
+        >
+          {fields.map(field => (
+            <label key={field.name}>
+              {field.label}
+              {field.type === "textarea" ? (
+                <textarea
+                  rows={6}
+                  value={values[field.name] ?? ""}
+                  onChange={event =>
+                    setValues(current => ({
+                      ...current,
+                      [field.name]: event.target.value,
+                    }))
+                  }
+                  required
+                />
+              ) : (
+                <input
+                  type={
+                    field.type === "email"
+                      ? "email"
+                      : field.type === "tel"
+                        ? "tel"
+                        : "text"
+                  }
+                  value={values[field.name] ?? ""}
+                  onChange={event =>
+                    setValues(current => ({
+                      ...current,
+                      [field.name]: event.target.value,
+                    }))
+                  }
+                  required
+                />
+              )}
+            </label>
+          ))}
+          <button
+            className="button button--primary"
+            type="submit"
+            disabled={submit.isPending}
+          >
+            {submit.isPending
+              ? "Enviando..."
+              : submit.isSuccess
+                ? "Mensagem enviada"
+                : "Enviar mensagem"}
+          </button>
+          {submit.error && (
+            <small className="form-error">{submit.error.message}</small>
+          )}
+        </form>
+      </section>
+    </>
+  );
+}
+
 export function NotFoundPage() {
   return (
     <section className="shell empty-page">

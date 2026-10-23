@@ -6,6 +6,7 @@ import {
   competitions,
   importJobs,
   forms,
+  formSubmissions,
   menus,
   mediaAssets,
   pages,
@@ -25,6 +26,7 @@ import {
   teamDirectory,
 } from "@shared/newlogData";
 import { ENV } from "./_core/env";
+import * as XLSX from "xlsx";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 let seedPromise: Promise<void> | null = null;
@@ -340,6 +342,8 @@ export async function getPublicSnapshot() {
     playerRows,
     competitionRows,
     pageRows,
+    menuRows,
+    formRows,
   ] = await Promise.all([
     db.select().from(siteSettings).where(eq(siteSettings.isPublic, 1)),
     db
@@ -363,6 +367,12 @@ export async function getPublicSnapshot() {
       .from(pages)
       .where(eq(pages.status, "published"))
       .orderBy(pages.slug),
+    db
+      .select()
+      .from(menus)
+      .where(eq(menus.status, "published"))
+      .orderBy(menus.location),
+    db.select().from(forms).where(eq(forms.active, 1)).orderBy(forms.name),
   ]);
   const settings = Object.fromEntries(
     settingsRows.map(row => [row.settingKey, row.value ?? ""])
@@ -374,6 +384,8 @@ export async function getPublicSnapshot() {
     players: playerRows,
     competitions: competitionRows,
     pages: pageRows,
+    menus: menuRows,
+    forms: formRows,
   };
 }
 
@@ -545,11 +557,102 @@ export async function getAdminUsers() {
 export async function getAdminContentModules() {
   const db = await getDb();
   if (!db) return { menus: [], forms: [], submissions: [] };
-  const [menuRows, formRows] = await Promise.all([
+  const [menuRows, formRows, submissionRows] = await Promise.all([
     db.select().from(menus).orderBy(desc(menus.updatedAt)),
     db.select().from(forms).orderBy(desc(forms.updatedAt)),
+    db
+      .select()
+      .from(formSubmissions)
+      .orderBy(desc(formSubmissions.createdAt))
+      .limit(50),
   ]);
-  return { menus: menuRows, forms: formRows, submissions: [] };
+  return { menus: menuRows, forms: formRows, submissions: submissionRows };
+}
+
+export async function submitForm(slug: string, data: unknown) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const form = await db
+    .select({ id: forms.id })
+    .from(forms)
+    .where(and(eq(forms.slug, slug), eq(forms.active, 1)))
+    .limit(1);
+  if (!form[0]) throw new Error("Formulário não encontrado");
+  const result = await db.insert(formSubmissions).values({
+    formId: form[0].id,
+    data,
+  });
+  return { id: Number(result[0].insertId) };
+}
+
+export async function registerMedia(
+  input: {
+    title: string;
+    storagePath: string;
+    mimeType: string;
+    altText?: string;
+    folder?: string;
+  },
+  userId?: number
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(mediaAssets).values({
+    title: input.title,
+    storagePath: input.storagePath,
+    mimeType: input.mimeType,
+    altText: input.altText ?? null,
+    folder: input.folder ?? "uploads",
+    status: "active",
+  });
+  await db.insert(auditLogs).values({
+    action: "create",
+    entity: "media_assets",
+    entityId: String(result[0].insertId),
+    userId: userId ?? null,
+    metadata: { storagePath: input.storagePath },
+  });
+  return { id: Number(result[0].insertId), ...input };
+}
+
+export async function previewWorkbook(
+  fileName: string,
+  base64: string,
+  userId?: number
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const buffer = Buffer.from(base64, "base64");
+  if (buffer.byteLength > 15 * 1024 * 1024)
+    throw new Error("A planilha excede 15 MB");
+  const workbook = XLSX.read(buffer, { type: "buffer", cellDates: true });
+  const sheets = workbook.SheetNames.map(name => {
+    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(
+      workbook.Sheets[name],
+      { defval: null, raw: false }
+    );
+    return {
+      name,
+      columns: rows[0] ? Object.keys(rows[0]) : [],
+      rowCount: rows.length,
+      sample: rows.slice(0, 8),
+    };
+  });
+  const summary = {
+    sheets: sheets.length,
+    totalRows: sheets.reduce((total, sheet) => total + sheet.rowCount, 0),
+    sheetsDetail: sheets,
+  };
+  await db.insert(importJobs).values({ fileName, status: "preview", summary });
+  await db
+    .insert(auditLogs)
+    .values({
+      action: "preview",
+      entity: "import_jobs",
+      metadata: { fileName, sheets: sheets.length },
+      userId: userId ?? null,
+    });
+  return summary;
 }
 
 export async function saveMenu(

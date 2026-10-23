@@ -8,6 +8,7 @@ import AdminPage from "./pages/AdminPage";
 import {
   AboutPage,
   CompetitionsPage,
+  ContactPage,
   HistoryPage,
   NotFoundPage,
   PlayersPage,
@@ -27,6 +28,7 @@ function PublicRouter() {
         <Route path="/times" component={TeamsPage} />
         <Route path="/jogadores" component={PlayersPage} />
         <Route path="/copas" component={CompetitionsPage} />
+        <Route path="/contato" component={ContactPage} />
         <Route component={NotFoundPage} />
       </Switch>
     </SiteShell>

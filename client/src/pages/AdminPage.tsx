@@ -145,6 +145,9 @@ export default function AdminPage() {
   const [pageSlug, setPageSlug] = useState("nova-pagina");
   const [pageExcerpt, setPageExcerpt] = useState("");
   const [pageText, setPageText] = useState("");
+  const [pageBlockType, setPageBlockType] = useState("text");
+  const [pageBlockImage, setPageBlockImage] = useState("");
+  const [pageBlockHref, setPageBlockHref] = useState("");
   const [postEditing, setPostEditing] = useState<number | undefined>();
   const [postTitle, setPostTitle] = useState("Nova publicação");
   const [postSlug, setPostSlug] = useState("nova-publicacao");
@@ -152,6 +155,10 @@ export default function AdminPage() {
   const [postContent, setPostContent] = useState("");
   const [instagram, setInstagram] = useState("");
   const [description, setDescription] = useState("");
+  const [siteName, setSiteName] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [primaryColor, setPrimaryColor] = useState("#15156b");
+  const [accentColor, setAccentColor] = useState("#8fbce8");
   const savePage = trpc.admin.savePage.useMutation({
     onSuccess: () => {
       toast.success("Página salva no banco de dados.");
@@ -206,13 +213,54 @@ export default function AdminPage() {
     },
     onError: error => toast.error(error.message),
   });
+  const [mediaTitle, setMediaTitle] = useState("");
+  const [mediaUrl, setMediaUrl] = useState("");
+  const [mediaAlt, setMediaAlt] = useState("");
+  const registerMedia = trpc.admin.registerMedia.useMutation({
+    onSuccess: () => {
+      toast.success("Mídia indexada no banco.");
+      setMediaTitle("");
+      setMediaUrl("");
+      setMediaAlt("");
+      dashboard.refetch();
+    },
+    onError: error => toast.error(error.message),
+  });
+  const [importPreview, setImportPreview] = useState<{
+    sheets: number;
+    totalRows: number;
+    sheetsDetail: Array<{
+      name: string;
+      columns: string[];
+      rowCount: number;
+      sample: unknown[];
+    }>;
+  } | null>(null);
+  const previewWorkbook = trpc.admin.previewWorkbook.useMutation({
+    onSuccess: data => {
+      setImportPreview(data);
+      toast.success("Pré-visualização gerada. Revise antes de importar.");
+    },
+    onError: error => toast.error(error.message),
+  });
   const settings = snapshot.data?.settings ?? {};
   useEffect(() => {
     if (settings.instagram_url && !instagram)
       setInstagram(settings.instagram_url);
     if (settings.site_description && !description)
       setDescription(settings.site_description);
-  }, [settings.instagram_url, settings.site_description]);
+    if (settings.site_name && !siteName) setSiteName(settings.site_name);
+    if (settings.logo_url && !logoUrl) setLogoUrl(settings.logo_url);
+    if (settings.primary_color) setPrimaryColor(settings.primary_color);
+    if (settings.accent_color) setAccentColor(settings.accent_color);
+  }, [
+    settings.instagram_url,
+    settings.site_description,
+    settings.site_name,
+    settings.logo_url,
+    settings.primary_color,
+    settings.accent_color,
+  ]);
 
   if (me.isLoading)
     return (
@@ -252,6 +300,9 @@ export default function AdminPage() {
     setPageSlug("nova-pagina");
     setPageExcerpt("");
     setPageText("");
+    setPageBlockType("text");
+    setPageBlockImage("");
+    setPageBlockHref("");
     setActive("pages");
   };
   const openPage = (page: (typeof pages)[number]) => {
@@ -262,9 +313,21 @@ export default function AdminPage() {
     const block = Array.isArray(page.blocks)
       ? (page.blocks.find(
           item => typeof item === "object" && item && "text" in item
-        ) as { text?: string } | undefined)
+        ) as
+          | {
+              type?: string;
+              text?: string;
+              imageUrl?: string;
+              href?: string;
+            }
+          | undefined)
       : undefined;
     setPageText(block?.text ?? "");
+    setPageBlockType(typeof block?.type === "string" ? block.type : "text");
+    setPageBlockImage(
+      typeof block?.imageUrl === "string" ? block.imageUrl : ""
+    );
+    setPageBlockHref(typeof block?.href === "string" ? block.href : "");
     setActive("pages");
   };
   const handleSavePage = (status: "draft" | "published") =>
@@ -276,9 +339,19 @@ export default function AdminPage() {
       status,
       seoTitle: pageTitle,
       seoDescription: pageExcerpt,
-      blocks: [{ type: "text", title: pageTitle, text: pageText }],
+      blocks: [
+        {
+          type: pageBlockType as "text",
+          title: pageTitle,
+          text: pageText,
+          imageUrl: pageBlockImage || undefined,
+          href: pageBlockHref || undefined,
+        },
+      ],
     });
   const handleSettings = async () => {
+    if (siteName)
+      await updateSetting.mutateAsync({ key: "site_name", value: siteName });
     if (instagram)
       await updateSetting.mutateAsync({
         key: "instagram_url",
@@ -288,6 +361,18 @@ export default function AdminPage() {
       await updateSetting.mutateAsync({
         key: "site_description",
         value: description,
+      });
+    if (logoUrl)
+      await updateSetting.mutateAsync({ key: "logo_url", value: logoUrl });
+    if (primaryColor)
+      await updateSetting.mutateAsync({
+        key: "primary_color",
+        value: primaryColor,
+      });
+    if (accentColor)
+      await updateSetting.mutateAsync({
+        key: "accent_color",
+        value: accentColor,
       });
   };
   const openNewPost = () => {
@@ -465,6 +550,40 @@ export default function AdminPage() {
                   Abrir biblioteca{" "}
                   <ArrowLeft size={15} className="rotate-180" />
                 </button>
+                <label className="import-file-input">
+                  Pré-visualizar outra planilha
+                  <input
+                    type="file"
+                    accept=".xlsx,.xls"
+                    onChange={event => {
+                      const file = event.target.files?.[0];
+                      if (!file) return;
+                      const reader = new FileReader();
+                      reader.onload = () => {
+                        const result = String(reader.result ?? "");
+                        previewWorkbook.mutate({
+                          fileName: file.name,
+                          base64: result.split(",")[1] ?? "",
+                        });
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                </label>
+                {importPreview && (
+                  <div className="import-preview">
+                    <strong>
+                      {importPreview.sheets} abas · {importPreview.totalRows}{" "}
+                      linhas
+                    </strong>
+                    {importPreview.sheetsDetail.map(sheet => (
+                      <small key={sheet.name}>
+                        {sheet.name}: {sheet.rowCount} linhas ·{" "}
+                        {sheet.columns.join(", ")}
+                      </small>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </>
@@ -509,12 +628,58 @@ export default function AdminPage() {
                   />
                 </label>
                 <label>
-                  Bloco de texto
+                  Tipo de bloco
+                  <select
+                    value={pageBlockType}
+                    onChange={event => setPageBlockType(event.target.value)}
+                  >
+                    {[
+                      ["text", "Texto"],
+                      ["hero", "Hero"],
+                      ["heading", "Título"],
+                      ["image", "Imagem"],
+                      ["gallery", "Galeria"],
+                      ["banner", "Banner"],
+                      ["button", "Botão"],
+                      ["columns", "Colunas"],
+                      ["video", "Vídeo"],
+                      ["list", "Lista"],
+                      ["cards", "Cards"],
+                      ["teams", "Times"],
+                      ["news", "Notícias"],
+                      ["events", "Eventos"],
+                      ["social", "Redes sociais"],
+                      ["separator", "Separador"],
+                      ["spacer", "Espaçamento"],
+                      ["section", "Seção"],
+                    ].map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Conteúdo do bloco
                   <textarea
                     rows={12}
                     value={pageText}
                     onChange={event => setPageText(event.target.value)}
                     placeholder="Escreva o conteúdo desta seção..."
+                  />
+                </label>
+                <label>
+                  URL da imagem (opcional)
+                  <input
+                    value={pageBlockImage}
+                    onChange={event => setPageBlockImage(event.target.value)}
+                  />
+                </label>
+                <label>
+                  Link do bloco (opcional)
+                  <input
+                    value={pageBlockHref}
+                    onChange={event => setPageBlockHref(event.target.value)}
                   />
                 </label>
                 <div className="editor-actions">
@@ -573,6 +738,36 @@ export default function AdminPage() {
               </div>
               <div className="editor-canvas">
                 <label>
+                  Nome do site
+                  <input
+                    value={siteName}
+                    onChange={event => setSiteName(event.target.value)}
+                  />
+                </label>
+                <label>
+                  URL da logo institucional
+                  <input
+                    value={logoUrl}
+                    onChange={event => setLogoUrl(event.target.value)}
+                  />
+                </label>
+                <label>
+                  Cor principal
+                  <input
+                    type="color"
+                    value={primaryColor}
+                    onChange={event => setPrimaryColor(event.target.value)}
+                  />
+                </label>
+                <label>
+                  Cor de destaque
+                  <input
+                    type="color"
+                    value={accentColor}
+                    onChange={event => setAccentColor(event.target.value)}
+                  />
+                </label>
+                <label>
                   Instagram oficial
                   <input
                     value={instagram}
@@ -609,6 +804,45 @@ export default function AdminPage() {
                   registros do CMS.
                 </p>
               </div>
+            </div>
+            <div className="editor-canvas media-register">
+              <label>
+                Título do arquivo
+                <input
+                  value={mediaTitle}
+                  onChange={event => setMediaTitle(event.target.value)}
+                  placeholder="Foto da equipe"
+                />
+              </label>
+              <label>
+                URL pública do arquivo
+                <input
+                  value={mediaUrl}
+                  onChange={event => setMediaUrl(event.target.value)}
+                  placeholder="https://..."
+                />
+              </label>
+              <label>
+                Texto alternativo
+                <input
+                  value={mediaAlt}
+                  onChange={event => setMediaAlt(event.target.value)}
+                />
+              </label>
+              <button
+                className="button button--primary"
+                onClick={() =>
+                  registerMedia.mutate({
+                    title: mediaTitle,
+                    storagePath: mediaUrl,
+                    mimeType: "image/*",
+                    altText: mediaAlt,
+                  })
+                }
+                disabled={registerMedia.isPending || !mediaTitle || !mediaUrl}
+              >
+                <Save size={15} /> Indexar mídia
+              </button>
             </div>
             <div className="media-grid">
               {(dashboard.data?.media ?? []).map(asset => (
@@ -710,6 +944,20 @@ export default function AdminPage() {
               <small>
                 {modulesQuery.data?.forms.length ?? 0} formulário(s) salvo(s)
               </small>
+              <div className="submission-list">
+                <span className="eyebrow">Mensagens recebidas</span>
+                {(modulesQuery.data?.submissions ?? [])
+                  .slice(0, 8)
+                  .map(submission => (
+                    <div className="submission-row" key={submission.id}>
+                      <b>#{submission.id}</b>
+                      <span>
+                        {new Date(submission.createdAt).toLocaleString("pt-BR")}
+                      </span>
+                      <small>{JSON.stringify(submission.data)}</small>
+                    </div>
+                  ))}
+              </div>
             </div>
           </div>
         )}

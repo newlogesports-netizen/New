@@ -1591,6 +1591,78 @@ a {
   font-weight: 800;
   text-transform: uppercase;
 }
+.contact-layout {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 70px;
+  padding-bottom: 110px;
+}
+.contact-layout h2 {
+  max-width: 500px;
+  margin: 14px 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 54px;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+.contact-layout p {
+  max-width: 440px;
+}
+.public-form {
+  display: grid;
+  gap: 16px;
+  padding: 27px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+.public-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+.public-form input,
+.public-form textarea {
+  width: 100%;
+  padding: 13px;
+  color: var(--white);
+  background: var(--night);
+  border: 1px solid var(--line);
+  outline: 0;
+  font: inherit;
+  resize: vertical;
+}
+.public-form input:focus,
+.public-form textarea:focus {
+  border-color: var(--violet-bright);
+  box-shadow: 0 0 0 3px rgba(143, 188, 232, 0.2);
+}
+.submission-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.submission-row {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 10px;
+}
+.submission-row span,
+.submission-row small {
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.form-error {
+  color: #ff9c9c;
+}
 .empty-page {
   min-height: 550px;
   padding-top: 150px;
@@ -1900,6 +1972,34 @@ a {
 .import-summary span {
   color: rgba(255, 255, 255, 0.5);
   font-size: 11px;
+}
+.import-file-input {
+  display: grid;
+  gap: 7px;
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 10px;
+  font-weight: 700;
+}
+.import-file-input input {
+  max-width: 100%;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 10px;
+}
+.import-preview {
+  display: grid;
+  gap: 6px;
+  margin-top: 15px;
+  padding-top: 13px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.import-preview strong {
+  color: var(--lime);
+  font-size: 12px;
+}
+.import-preview small {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 10px;
 }
 .rotate-180 {
   transform: rotate(180deg);

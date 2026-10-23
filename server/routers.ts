@@ -7,7 +7,26 @@ import { z } from "zod";
 
 const blockInput = z
   .object({
-    type: z.enum(["text", "hero", "heading", "image", "button", "spacer"]),
+    type: z.enum([
+      "text",
+      "hero",
+      "heading",
+      "image",
+      "gallery",
+      "banner",
+      "button",
+      "columns",
+      "video",
+      "list",
+      "cards",
+      "teams",
+      "news",
+      "events",
+      "social",
+      "separator",
+      "spacer",
+      "section",
+    ]),
     title: z.string().max(200).optional(),
     text: z.string().max(5000).optional(),
     imageUrl: z.string().max(500).optional(),
@@ -82,6 +101,19 @@ const formInput = z.object({
   active: z.boolean(),
 });
 
+const mediaInput = z.object({
+  title: z.string().min(2).max(220),
+  storagePath: z.string().url().max(500),
+  mimeType: z.string().min(3).max(120),
+  altText: z.string().max(300).optional(),
+  folder: z.string().max(120).optional(),
+});
+
+const workbookInput = z.object({
+  fileName: z.string().min(1).max(255),
+  base64: z.string().min(10).max(20_000_000),
+});
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -94,6 +126,14 @@ export const appRouter = router({
   }),
   public: router({
     snapshot: publicProcedure.query(() => db.getPublicSnapshot()),
+    submitForm: publicProcedure
+      .input(
+        z.object({
+          slug: z.string().min(2).max(160),
+          data: z.record(z.string(), z.string().max(500)),
+        })
+      )
+      .mutation(({ input }) => db.submitForm(input.slug, input.data)),
   }),
   admin: router({
     dashboard: adminProcedure.query(() => db.getAdminDashboard()),
@@ -111,6 +151,14 @@ export const appRouter = router({
     saveForm: adminProcedure
       .input(formInput)
       .mutation(({ input, ctx }) => db.saveForm(input, ctx.user.id)),
+    registerMedia: adminProcedure
+      .input(mediaInput)
+      .mutation(({ input, ctx }) => db.registerMedia(input, ctx.user.id)),
+    previewWorkbook: adminProcedure
+      .input(workbookInput)
+      .mutation(({ input, ctx }) =>
+        db.previewWorkbook(input.fileName, input.base64, ctx.user.id)
+      ),
     updateSetting: adminProcedure
       .input(
         z.object({

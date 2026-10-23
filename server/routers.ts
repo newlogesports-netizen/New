@@ -114,6 +114,13 @@ const workbookInput = z.object({
   base64: z.string().min(10).max(20_000_000),
 });
 
+const uploadInput = z.object({
+  title: z.string().min(2).max(220),
+  mimeType: z.string().regex(/^image\/(png|jpeg|webp|gif)$/),
+  base64Data: z.string().min(20).max(60_000),
+  altText: z.string().max(300).optional(),
+});
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -159,6 +166,9 @@ export const appRouter = router({
       .mutation(({ input, ctx }) =>
         db.previewWorkbook(input.fileName, input.base64, ctx.user.id)
       ),
+    uploadMedia: adminProcedure
+      .input(uploadInput)
+      .mutation(({ input, ctx }) => db.uploadMedia(input, ctx.user.id)),
     updateSetting: adminProcedure
       .input(
         z.object({

@@ -175,6 +175,14 @@ export const mediaAssets = mysqlTable("media_assets", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+export const mediaBlobs = mysqlTable("media_blobs", {
+  id: int("id").autoincrement().primaryKey(),
+  mediaId: int("mediaId").notNull().unique(),
+  mimeType: varchar("mimeType", { length: 120 }).notNull(),
+  base64Data: text("base64Data").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export const importJobs = mysqlTable("import_jobs", {
   id: int("id").autoincrement().primaryKey(),
   fileName: varchar("fileName", { length: 255 }).notNull(),

@@ -2049,6 +2049,60 @@ a {
   padding-top: 5px;
   border-top: 1px solid var(--line);
 }
+.block-stack {
+  display: grid;
+  gap: 7px;
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+}
+.block-stack__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.block-row {
+  display: grid;
+  grid-template-columns: 18px 1fr 24px;
+  gap: 9px;
+  align-items: center;
+  padding: 11px;
+  color: var(--ink);
+  background: #eaf3fb;
+  border: 1px solid var(--line);
+  cursor: grab;
+}
+.block-row:active {
+  cursor: grabbing;
+}
+.block-row > svg {
+  color: var(--violet);
+}
+.block-row span {
+  min-width: 0;
+}
+.block-row b,
+.block-row small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.block-row b {
+  font-size: 11px;
+  text-transform: uppercase;
+}
+.block-row small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.block-row button {
+  display: grid;
+  padding: 4px;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+}
 .editor-sidebar {
   padding: 20px;
   background: #171b73;

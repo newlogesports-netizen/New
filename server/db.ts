@@ -9,6 +9,7 @@ import {
   formSubmissions,
   menus,
   mediaAssets,
+  mediaBlobs,
   pages,
   players,
   publications,
@@ -613,6 +614,37 @@ export async function registerMedia(
     metadata: { storagePath: input.storagePath },
   });
   return { id: Number(result[0].insertId), ...input };
+}
+
+export async function uploadMedia(
+  input: { title: string; mimeType: string; base64Data: string; altText?: string },
+  userId?: number
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  if (input.base64Data.length > 60_000) throw new Error("Arquivo muito grande para este upload direto");
+  const temporaryPath = `/api/media/pending-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const result = await db.insert(mediaAssets).values({
+    title: input.title,
+    storagePath: temporaryPath,
+    mimeType: input.mimeType,
+    altText: input.altText ?? null,
+    folder: "uploads",
+    status: "active",
+  });
+  const id = Number(result[0].insertId);
+  const storagePath = `/api/media/${id}`;
+  await db.update(mediaAssets).set({ storagePath }).where(eq(mediaAssets.id, id));
+  await db.insert(mediaBlobs).values({ mediaId: id, mimeType: input.mimeType, base64Data: input.base64Data });
+  await db.insert(auditLogs).values({ action: "upload", entity: "media_assets", entityId: String(id), userId: userId ?? null });
+  return { id, storagePath, title: input.title, mimeType: input.mimeType };
+}
+
+export async function getMediaBlob(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const rows = await db.select().from(mediaBlobs).where(eq(mediaBlobs.mediaId, id)).limit(1);
+  return rows[0] ?? null;
 }
 
 export async function previewWorkbook(

@@ -6,6 +6,7 @@ import {
   ChevronRight,
   FileImage,
   FileSpreadsheet,
+  GripVertical,
   Inbox,
   LayoutDashboard,
   LogIn,
@@ -15,6 +16,7 @@ import {
   Save,
   Settings2,
   ShieldCheck,
+  Trash2,
   Users,
   X,
 } from "lucide-react";
@@ -37,6 +39,20 @@ const adminSections = [
 ] as const;
 
 type Section = (typeof adminSections)[number][1];
+
+type EditorBlockType =
+  | "text" | "hero" | "heading" | "image" | "gallery" | "banner" | "button"
+  | "columns" | "video" | "list" | "cards" | "teams" | "news" | "events"
+  | "social" | "separator" | "spacer" | "section";
+
+type EditorBlock = {
+  id: string;
+  type: EditorBlockType;
+  title?: string;
+  text?: string;
+  imageUrl?: string;
+  href?: string;
+};
 
 function AdminShell({
   children,
@@ -148,6 +164,10 @@ export default function AdminPage() {
   const [pageBlockType, setPageBlockType] = useState("text");
   const [pageBlockImage, setPageBlockImage] = useState("");
   const [pageBlockHref, setPageBlockHref] = useState("");
+  const [pageBlocks, setPageBlocks] = useState<EditorBlock[]>([
+    { id: "block-1", type: "text", title: "", text: "" },
+  ]);
+  const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
   const [postEditing, setPostEditing] = useState<number | undefined>();
   const [postTitle, setPostTitle] = useState("Nova publicação");
   const [postSlug, setPostSlug] = useState("nova-publicacao");
@@ -222,6 +242,13 @@ export default function AdminPage() {
       setMediaTitle("");
       setMediaUrl("");
       setMediaAlt("");
+      dashboard.refetch();
+    },
+    onError: error => toast.error(error.message),
+  });
+  const uploadMedia = trpc.admin.uploadMedia.useMutation({
+    onSuccess: () => {
+      toast.success("Arquivo enviado e persistido.");
       dashboard.refetch();
     },
     onError: error => toast.error(error.message),
@@ -303,6 +330,7 @@ export default function AdminPage() {
     setPageBlockType("text");
     setPageBlockImage("");
     setPageBlockHref("");
+    setPageBlocks([{ id: `block-${Date.now()}`, type: "text", title: "", text: "" }]);
     setActive("pages");
   };
   const openPage = (page: (typeof pages)[number]) => {
@@ -328,8 +356,39 @@ export default function AdminPage() {
       typeof block?.imageUrl === "string" ? block.imageUrl : ""
     );
     setPageBlockHref(typeof block?.href === "string" ? block.href : "");
+    setPageBlocks(
+      Array.isArray(page.blocks) && page.blocks.length
+        ? page.blocks.map((item, index) => {
+            const value = item as Record<string, unknown>;
+            return {
+              id: `block-${page.id}-${index}`,
+              type: (typeof value.type === "string" ? value.type : "text") as EditorBlockType,
+              title: typeof value.title === "string" ? value.title : "",
+              text: typeof value.text === "string" ? value.text : "",
+              imageUrl: typeof value.imageUrl === "string" ? value.imageUrl : "",
+              href: typeof value.href === "string" ? value.href : "",
+            };
+          })
+        : [{ id: `block-${page.id}-0`, type: "text" as EditorBlockType, title: page.title, text: "" }]
+    );
     setActive("pages");
   };
+  const moveBlock = (fromId: string, toId: string) => {
+    setPageBlocks(current => {
+      const from = current.findIndex(block => block.id === fromId);
+      const to = current.findIndex(block => block.id === toId);
+      if (from < 0 || to < 0 || from === to) return current;
+      const next = [...current];
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item);
+      return next;
+    });
+  };
+  const addBlock = () =>
+    setPageBlocks(current => [
+      ...current,
+      { id: `block-${Date.now()}`, type: pageBlockType as EditorBlockType, title: "", text: "" },
+    ]);
   const handleSavePage = (status: "draft" | "published") =>
     savePage.mutate({
       id: editing,
@@ -339,15 +398,9 @@ export default function AdminPage() {
       status,
       seoTitle: pageTitle,
       seoDescription: pageExcerpt,
-      blocks: [
-        {
-          type: pageBlockType as "text",
-          title: pageTitle,
-          text: pageText,
-          imageUrl: pageBlockImage || undefined,
-          href: pageBlockHref || undefined,
-        },
-      ],
+      blocks: pageBlocks.length
+        ? pageBlocks
+        : [{ type: pageBlockType as EditorBlockType, title: pageTitle, text: pageText, imageUrl: pageBlockImage || undefined, href: pageBlockHref || undefined }],
     });
   const handleSettings = async () => {
     if (siteName)
@@ -374,6 +427,26 @@ export default function AdminPage() {
         key: "accent_color",
         value: accentColor,
       });
+  };
+  const handleMediaFile = (file?: File) => {
+    if (!file) return;
+    if (!/^image\/(png|jpeg|webp|gif)$/.test(file.type)) {
+      toast.error("Escolha uma imagem PNG, JPEG, WebP ou GIF.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result ?? "");
+      const base64Data = result.split(",")[1] ?? "";
+      setMediaTitle(current => current || file.name);
+      uploadMedia.mutate({
+        title: mediaTitle || file.name,
+        mimeType: file.type as "image/png" | "image/jpeg" | "image/webp" | "image/gif",
+        base64Data,
+        altText: mediaAlt || undefined,
+      });
+    };
+    reader.readAsDataURL(file);
   };
   const openNewPost = () => {
     setPostEditing(undefined);
@@ -682,6 +755,29 @@ export default function AdminPage() {
                     onChange={event => setPageBlockHref(event.target.value)}
                   />
                 </label>
+                <div className="block-stack">
+                  <div className="block-stack__header">
+                    <span className="eyebrow">Ordem dos blocos</span>
+                    <button type="button" className="text-link" onClick={addBlock}>Adicionar bloco</button>
+                  </div>
+                  {pageBlocks.map((block, index) => (
+                    <div
+                      className="block-row"
+                      key={block.id}
+                      draggable
+                      onDragStart={() => setDraggedBlockId(block.id)}
+                      onDragOver={event => event.preventDefault()}
+                      onDrop={() => {
+                        if (draggedBlockId) moveBlock(draggedBlockId, block.id);
+                        setDraggedBlockId(null);
+                      }}
+                    >
+                      <GripVertical size={16} />
+                      <span><b>{index + 1}. {block.type}</b><small>{block.title || block.text || "Bloco sem texto"}</small></span>
+                      <button type="button" aria-label="Remover bloco" onClick={() => setPageBlocks(current => current.filter(item => item.id !== block.id))}><Trash2 size={15} /></button>
+                    </div>
+                  ))}
+                </div>
                 <div className="editor-actions">
                   <button
                     className="button button--outline"
@@ -827,6 +923,15 @@ export default function AdminPage() {
                 <input
                   value={mediaAlt}
                   onChange={event => setMediaAlt(event.target.value)}
+                />
+              </label>
+              <label>
+                Upload direto (imagem até 45 KB)
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  onChange={event => handleMediaFile(event.target.files?.[0])}
+                  disabled={uploadMedia.isPending}
                 />
               </label>
               <button

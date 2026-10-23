@@ -166,6 +166,11 @@ export const appRouter = router({
       .mutation(({ input, ctx }) =>
         db.previewWorkbook(input.fileName, input.base64, ctx.user.id)
       ),
+    confirmWorkbook: adminProcedure
+      .input(workbookInput)
+      .mutation(({ input, ctx }) =>
+        db.confirmWorkbook(input.fileName, input.base64, ctx.user.id)
+      ),
     uploadMedia: adminProcedure
       .input(uploadInput)
       .mutation(({ input, ctx }) => db.uploadMedia(input, ctx.user.id)),

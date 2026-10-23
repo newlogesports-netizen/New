@@ -263,10 +263,20 @@ export default function AdminPage() {
       sample: unknown[];
     }>;
   } | null>(null);
+  const [pendingImport, setPendingImport] = useState<{ fileName: string; base64: string } | null>(null);
   const previewWorkbook = trpc.admin.previewWorkbook.useMutation({
     onSuccess: data => {
       setImportPreview(data);
       toast.success("Pré-visualização gerada. Revise antes de importar.");
+    },
+    onError: error => toast.error(error.message),
+  });
+  const confirmWorkbook = trpc.admin.confirmWorkbook.useMutation({
+    onSuccess: data => {
+      toast.success(`${data.rankingTeams} equipes e dados de jogadores importados.`);
+      setPendingImport(null);
+      setImportPreview(null);
+      dashboard.refetch();
     },
     onError: error => toast.error(error.message),
   });
@@ -634,10 +644,9 @@ export default function AdminPage() {
                       const reader = new FileReader();
                       reader.onload = () => {
                         const result = String(reader.result ?? "");
-                        previewWorkbook.mutate({
-                          fileName: file.name,
-                          base64: result.split(",")[1] ?? "",
-                        });
+                        const base64 = result.split(",")[1] ?? "";
+                        setPendingImport({ fileName: file.name, base64 });
+                        previewWorkbook.mutate({ fileName: file.name, base64 });
                       };
                       reader.readAsDataURL(file);
                     }}
@@ -655,6 +664,13 @@ export default function AdminPage() {
                         {sheet.columns.join(", ")}
                       </small>
                     ))}
+                    <button
+                      className="button button--primary"
+                      disabled={!pendingImport || confirmWorkbook.isPending}
+                      onClick={() => pendingImport && confirmWorkbook.mutate(pendingImport)}
+                    >
+                      {confirmWorkbook.isPending ? "Importando..." : "Confirmar e importar dados"}
+                    </button>
                   </div>
                 )}
               </div>

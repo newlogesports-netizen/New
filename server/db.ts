@@ -687,6 +687,72 @@ export async function previewWorkbook(
   return summary;
 }
 
+function numericCell(value: unknown) {
+  if (value === null || value === undefined || value === "") return null;
+  const parsed = Number(String(value).replace(/[^0-9,.-]/g, "").replace(",", "."));
+  return Number.isFinite(parsed) ? Math.round(parsed) : null;
+}
+
+function cleanCell(value: unknown) {
+  const text = String(value ?? "").trim();
+  return text && text !== "-" ? text : null;
+}
+
+function sheetRows(workbook: XLSX.WorkBook, name: string) {
+  const sheet = workbook.Sheets[name];
+  return sheet
+    ? XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: null, raw: false })
+    : [];
+}
+
+export async function confirmWorkbook(fileName: string, base64: string, userId?: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const buffer = Buffer.from(base64, "base64");
+  if (buffer.byteLength > 15 * 1024 * 1024) throw new Error("A planilha excede 15 MB");
+  const workbook = XLSX.read(buffer, { type: "buffer", cellDates: true });
+  const rankingRows = sheetRows(workbook, "RANKING GERAL NEWLOG");
+  const playerRows = sheetRows(workbook, "MAIORES NO GERAL");
+  if (!rankingRows.length) throw new Error("A planilha não contém a aba RANKING GERAL NEWLOG");
+
+  const rankingValues = rankingRows.flatMap(row => {
+    const teamName = cleanCell(row["RANKING NEWLOG"]);
+    if (!teamName) return [];
+    const scoreKeys = Object.keys(row).filter(key => key !== "RANKING NEWLOG" && key !== "TOTAL" && !key.startsWith("__EMPTY"));
+    const scores = scoreKeys.map(key => numericCell(row[key]));
+    return [{ teamName, position: rankingRows.findIndex(item => cleanCell(item["RANKING NEWLOG"]) === teamName) + 1, totalPoints: numericCell(row.TOTAL) ?? 0, scores }];
+  });
+  if (!rankingValues.length) throw new Error("Nenhuma equipe válida foi encontrada no ranking");
+
+  const logoByTeam = new Map(ranking.map(entry => [entry.name, entry.logo ?? null]));
+  await db.transaction(async tx => {
+    for (const entry of rankingValues) {
+      await tx.insert(rankingEntries).values({ ...entry, sourceSheet: "RANKING GERAL NEWLOG" }).onDuplicateKeyUpdate({ set: { position: entry.position, totalPoints: entry.totalPoints, scores: entry.scores, sourceSheet: "RANKING GERAL NEWLOG" } });
+      await tx.insert(teams).values({ name: entry.teamName, slug: slugify(entry.teamName), logoUrl: logoByTeam.get(entry.teamName) ?? null, modality: "Futebol 7", category: "Histórico Newlog", rankingPoints: entry.totalPoints, status: "published", sourceSheet: "RANKING GERAL NEWLOG" }).onDuplicateKeyUpdate({ set: { logoUrl: logoByTeam.get(entry.teamName) ?? null, rankingPoints: entry.totalPoints, sourceSheet: "RANKING GERAL NEWLOG" } });
+    }
+
+    if (playerRows.length) {
+      await tx.delete(players).where(eq(players.sourceSheet, "MAIORES NO GERAL"));
+      const playerValues = playerRows.flatMap((row, rowIndex) => [
+        ["NOME", "COPAS", "Participações", "P"],
+        ["NOME_1", "GOLS", "Gols", "P_1"],
+        ["NOME_2", "ASS", "Assistências", "P_2"],
+        ["NOME_3", "VALOR", "Valor", "P_3"],
+      ].flatMap(([nameKey, valueKey, metric, positionKey]) => {
+        const name = cleanCell(row[nameKey]);
+        const value = numericCell(row[valueKey]);
+        if (!name || value === null) return [];
+        return [{ name, metric, value, position: numericCell(row[positionKey]) ?? rowIndex + 1, sourceSheet: "MAIORES NO GERAL", status: "published" as const, imageUrl: null }];
+      }));
+      if (playerValues.length) await tx.insert(players).values(playerValues);
+    }
+
+    await tx.insert(importJobs).values({ fileName, status: "completed", summary: { sheets: workbook.SheetNames.length, rankingTeams: rankingValues.length, players: playerRows.length, confirmedAt: new Date().toISOString() }, createdBy: userId ?? null });
+    await tx.insert(auditLogs).values({ action: "confirm", entity: "import_jobs", metadata: { fileName, rankingTeams: rankingValues.length, players: playerRows.length }, userId: userId ?? null });
+  });
+  return { fileName, rankingTeams: rankingValues.length, playersImported: playerRows.length, sheets: workbook.SheetNames.length };
+}
+
 export async function saveMenu(
   input: {
     id?: number;

@@ -105,17 +105,26 @@ export default function Home() {
           </div>
         </div>
         <div className="hero__visual" aria-label="Identidade Newlog Esportes">
-          <div className="hero__grid-lines" />
-          <div className="hero__orb hero__orb--one" />
-          <div className="hero__orb hero__orb--two" />
-          <div className="hero__wordmark" aria-hidden="true">
-            <span>NEWLOG</span>
-            <em>ESPORTES</em>
-          </div>
-          <div className="hero__field-mark" aria-hidden="true">
-            <span />
-            <span />
-            <span />
+          <div className="hero__photo-collage">
+            <img
+              className="hero__photo hero__photo--main"
+              src="/manus-storage/IMG_20260831_124733_293_5c957e2e.jpg"
+              alt="Equipe reunida antes de uma partida da Newlog"
+            />
+            <img
+              className="hero__photo hero__photo--top"
+              src="/manus-storage/IMG_20260831_124733_089_46a6a13a.jpg"
+              alt="Entrega de troféu em uma competição da Newlog"
+            />
+            <img
+              className="hero__photo hero__photo--bottom"
+              src="/manus-storage/IMG_20260831_124733_294_bb09f60f.jpg"
+              alt="Disputa de bola durante uma partida"
+            />
+            <div className="hero__photo-label">
+              <span>NEWLOG / 001</span>
+              <strong>JOGO, MEMÓRIA E COMUNIDADE</strong>
+            </div>
           </div>
           <div className="hero__stamp">
             <span>NL</span>

@@ -141,6 +141,11 @@ export default function AdminPage() {
   const [pageSlug, setPageSlug] = useState("nova-pagina");
   const [pageExcerpt, setPageExcerpt] = useState("");
   const [pageText, setPageText] = useState("");
+  const [postEditing, setPostEditing] = useState<number | undefined>();
+  const [postTitle, setPostTitle] = useState("Nova publicação");
+  const [postSlug, setPostSlug] = useState("nova-publicacao");
+  const [postExcerpt, setPostExcerpt] = useState("");
+  const [postContent, setPostContent] = useState("");
   const [instagram, setInstagram] = useState("");
   const [description, setDescription] = useState("");
   const savePage = trpc.admin.savePage.useMutation({
@@ -157,6 +162,18 @@ export default function AdminPage() {
       snapshot.refetch();
     },
     onError: error => toast.error(error.message),
+  });
+  const savePublication = trpc.admin.savePublication.useMutation({
+    onSuccess: () => {
+      toast.success("Publicação salva no banco de dados.");
+      dashboard.refetch();
+      setActive("posts");
+    },
+    onError: error => toast.error(error.message),
+  });
+  const usersQuery = trpc.admin.users.useQuery(undefined, {
+    enabled: isAdmin,
+    retry: false,
   });
   const settings = snapshot.data?.settings ?? {};
   useEffect(() => {
@@ -242,6 +259,33 @@ export default function AdminPage() {
         value: description,
       });
   };
+  const openNewPost = () => {
+    setPostEditing(undefined);
+    setPostTitle("Nova publicação");
+    setPostSlug("nova-publicacao");
+    setPostExcerpt("");
+    setPostContent("");
+    setActive("posts");
+  };
+  const openPost = (
+    post: NonNullable<typeof dashboard.data>["publications"][number]
+  ) => {
+    setPostEditing(post.id);
+    setPostTitle(post.title);
+    setPostSlug(post.slug);
+    setPostExcerpt(post.excerpt ?? "");
+    setPostContent(post.content ?? "");
+    setActive("posts");
+  };
+  const handleSavePost = (status: "draft" | "published") =>
+    savePublication.mutate({
+      id: postEditing,
+      title: postTitle,
+      slug: postSlug,
+      excerpt: postExcerpt,
+      content: postContent,
+      status,
+    });
 
   return (
     <AdminShell active={active} onChange={setActive}>
@@ -525,17 +569,100 @@ export default function AdminPage() {
             </div>
           </div>
         )}
-        {(active === "posts" || active === "users") && (
+        {active === "posts" && (
+          <div className="admin-editor">
+            <div className="admin-heading">
+              <div>
+                <span className="eyebrow">Conteúdo / Publicações</span>
+                <h2>{postEditing ? "Editar publicação" : "Nova publicação"}</h2>
+                <p>
+                  Crie notícias e atualizações com rascunho e publicação
+                  controlada.
+                </p>
+              </div>
+              <button className="button button--outline" onClick={openNewPost}>
+                <PenSquare size={15} /> Nova publicação
+              </button>
+            </div>
+            <div className="editor-layout">
+              <div className="editor-canvas">
+                <label>
+                  Título
+                  <input
+                    value={postTitle}
+                    onChange={event => setPostTitle(event.target.value)}
+                  />
+                </label>
+                <label>
+                  Slug
+                  <input
+                    value={postSlug}
+                    onChange={event => setPostSlug(event.target.value)}
+                  />
+                </label>
+                <label>
+                  Resumo
+                  <textarea
+                    rows={3}
+                    value={postExcerpt}
+                    onChange={event => setPostExcerpt(event.target.value)}
+                  />
+                </label>
+                <label>
+                  Conteúdo
+                  <textarea
+                    rows={14}
+                    value={postContent}
+                    onChange={event => setPostContent(event.target.value)}
+                    placeholder="Escreva a publicação..."
+                  />
+                </label>
+                <div className="editor-actions">
+                  <button
+                    className="button button--outline"
+                    onClick={() => handleSavePost("draft")}
+                    disabled={savePublication.isPending}
+                  >
+                    <Save size={15} /> Salvar rascunho
+                  </button>
+                  <button
+                    className="button button--primary"
+                    onClick={() => handleSavePost("published")}
+                    disabled={savePublication.isPending}
+                  >
+                    <CheckCircle2 size={15} /> Publicar
+                  </button>
+                </div>
+              </div>
+              <aside className="editor-sidebar">
+                <span className="eyebrow">Publicações existentes</span>
+                {(dashboard.data?.publications ?? []).map(post => (
+                  <button onClick={() => openPost(post)} key={post.id}>
+                    <span>{post.title}</span>
+                    <ChevronRight size={15} />
+                  </button>
+                ))}
+              </aside>
+            </div>
+          </div>
+        )}
+        {active === "users" && (
           <div className="admin-empty">
-            <span className="eyebrow">Módulo preparado</span>
-            <h2>
-              {active === "posts" ? "Publicações" : "Usuários e permissões"}
-            </h2>
+            <span className="eyebrow">Acesso e permissões</span>
+            <h2>Usuários do CMS.</h2>
             <p>
-              O módulo está conectado à arquitetura do CMS e aguardando os
-              próximos registros oficiais. As tabelas e permissões estão
-              protegidas no servidor.
+              Contas autenticadas e seus papéis administrativos, consultados
+              diretamente do banco.
             </p>
+            <div className="admin-user-list">
+              {(usersQuery.data ?? []).map(user => (
+                <div className="admin-user-row" key={user.id}>
+                  <strong>{user.name || "Usuário sem nome"}</strong>
+                  <span>{user.email || "sem e-mail"}</span>
+                  <b>{user.role}</b>
+                </div>
+              ))}
+            </div>
             <button
               className="button button--outline"
               onClick={() => setActive("dashboard")}

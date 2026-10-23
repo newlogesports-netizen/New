@@ -31,6 +31,20 @@ const pageInput = z.object({
   seoDescription: z.string().max(320).optional(),
 });
 
+const publicationInput = z.object({
+  id: z.number().optional(),
+  title: z.string().min(2).max(220),
+  slug: z
+    .string()
+    .min(2)
+    .max(180)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  excerpt: z.string().max(500).optional(),
+  content: z.string().max(20000).optional(),
+  coverImage: z.string().max(500).optional(),
+  status: z.enum(["draft", "published", "archived"]),
+});
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -46,9 +60,13 @@ export const appRouter = router({
   }),
   admin: router({
     dashboard: adminProcedure.query(() => db.getAdminDashboard()),
+    users: adminProcedure.query(() => db.getAdminUsers()),
     savePage: adminProcedure
       .input(pageInput)
       .mutation(({ input, ctx }) => db.savePage(input, ctx.user.id)),
+    savePublication: adminProcedure
+      .input(publicationInput)
+      .mutation(({ input, ctx }) => db.savePublication(input, ctx.user.id)),
     updateSetting: adminProcedure
       .input(
         z.object({

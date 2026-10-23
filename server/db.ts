@@ -472,3 +472,70 @@ export async function savePage(
   });
   return { id, ...payload };
 }
+
+export async function savePublication(
+  input: {
+    id?: number;
+    title: string;
+    slug: string;
+    excerpt?: string;
+    content?: string;
+    status: "draft" | "published" | "archived";
+    coverImage?: string;
+  },
+  userId?: number
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const payload = {
+    title: input.title,
+    slug: input.slug,
+    excerpt: input.excerpt ?? null,
+    content: input.content ?? null,
+    coverImage: input.coverImage ?? null,
+    status: input.status,
+    publishedAt: input.status === "published" ? new Date() : null,
+    authorId: userId ?? null,
+  };
+  if (input.id) {
+    await db
+      .update(publications)
+      .set(payload)
+      .where(eq(publications.id, input.id));
+    await db.insert(auditLogs).values({
+      action: "update",
+      entity: "publications",
+      entityId: String(input.id),
+      userId: userId ?? null,
+      metadata: { slug: input.slug, status: input.status },
+    });
+    return { id: input.id, ...payload };
+  }
+  const result = await db.insert(publications).values(payload);
+  const id = Number(result[0].insertId);
+  await db.insert(auditLogs).values({
+    action: "create",
+    entity: "publications",
+    entityId: String(id),
+    userId: userId ?? null,
+    metadata: { slug: input.slug, status: input.status },
+  });
+  return { id, ...payload };
+}
+
+export async function getAdminUsers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      role: users.role,
+      loginMethod: users.loginMethod,
+      lastSignedIn: users.lastSignedIn,
+      createdAt: users.createdAt,
+    })
+    .from(users)
+    .orderBy(desc(users.lastSignedIn));
+}

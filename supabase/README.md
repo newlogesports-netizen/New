@@ -15,7 +15,7 @@ set role = 'superadmin'
 where id = 'UUID_DO_USUARIO';
 ```
 
-5. Cadastre `SUPABASE_URL`, `SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY` como variáveis protegidas do ambiente. Nunca publique a service role key nem a inclua no ZIP.
+5. Cadastre `SUPABASE_URL` e `SUPABASE_ANON_KEY` como variáveis protegidas do ambiente. Esta integração não depende de `SUPABASE_SERVICE_ROLE_KEY`; as operações administrativas usam a sessão autenticada do usuário e as políticas RLS.
 
 O arquivo SQL usa RLS para separar leitura pública de conteúdo publicado e edição administrativa autenticada. A senha fica exclusivamente no Supabase Auth; o CMS não salva senhas próprias.
 

@@ -21,6 +21,49 @@ import {
   rankingFromSnapshot,
 } from "@/lib/publicSnapshot";
 
+const photoGallery = [
+  {
+    src: "/manus-storage/IMG_20260831_124733_293_5c957e2e.jpg",
+    alt: "Equipe reunida antes de uma partida",
+    caption: "Jogo coletivo",
+  },
+  {
+    src: "/manus-storage/IMG_20260831_124733_089_46a6a13a.jpg",
+    alt: "Jogador levantando o troféu ao lado da família",
+    caption: "Memória que fica",
+  },
+  {
+    src: "/manus-storage/IMG_20260831_124733_294_bb09f60f.jpg",
+    alt: "Disputa de bola durante a partida",
+    caption: "Disputa em campo",
+  },
+  {
+    src: "/manus-storage/IMG_20260831_124733_393_bbd86cff.jpg",
+    alt: "Jogador conduzindo a bola em frente às bandeiras dos times",
+    caption: "Cada rodada conta",
+  },
+  {
+    src: "/manus-storage/IMG_20260831_124733_423_95f5ffd7.jpg",
+    alt: "Jogadores disputando a bola",
+    caption: "A bola em jogo",
+  },
+  {
+    src: "/manus-storage/IMG_20260831_124733_580_4bfdf618.jpg",
+    alt: "Dois jogadores comemorando durante a partida",
+    caption: "Comunidade em campo",
+  },
+  {
+    src: "/manus-storage/IMG_20260831_124733_280_2af5a014.jpg",
+    alt: "Jogador celebrando uma jogada",
+    caption: "O momento da rodada",
+  },
+  {
+    src: "/manus-storage/IMG_20260831_124733_383_2eaca3a6.jpg",
+    alt: "Jogador comemorando no gramado",
+    caption: "Histórias vivas",
+  },
+];
+
 export default function Home() {
   const snapshot = trpc.public.snapshot.useQuery(undefined, {
     staleTime: 60_000,
@@ -185,6 +228,30 @@ export default function Home() {
           ))}
         </div>
         <DataSourceNote />
+      </section>
+
+      <section className="shell section-block">
+        <SectionHeading
+          eyebrow="Registro em campo"
+          title="A competição também se guarda em imagens."
+          text="Fotos recebidas da comunidade para aproximar o arquivo das pessoas que fazem cada rodada acontecer."
+          linkLabel="Ver as Copas"
+          href="/copas"
+        />
+        <div className="photo-grid">
+          {photoGallery.map((photo, index) => (
+            <figure
+              className={`photo-card ${index === 0 ? "photo-card--featured" : ""}`}
+              key={photo.src}
+            >
+              <img src={photo.src} alt={photo.alt} loading="lazy" />
+              <figcaption>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{photo.caption}</strong>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
       </section>
 
       <section className="shell section-block">

@@ -766,6 +766,69 @@ a {
 .source-note svg {
   color: #6f9dcc;
 }
+.photo-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr;
+  grid-auto-rows: 190px;
+  gap: 12px;
+}
+.photo-card {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.photo-card--featured {
+  grid-row: span 2;
+}
+.photo-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.88;
+  filter: saturate(0.92);
+  transition:
+    transform 0.35s ease,
+    opacity 0.35s ease;
+}
+.photo-card::after {
+  position: absolute;
+  inset: 35% 0 0;
+  background: linear-gradient(180deg, transparent, rgba(7, 8, 66, 0.92));
+  content: "";
+}
+.photo-card:hover img {
+  opacity: 1;
+  transform: scale(1.04);
+}
+.photo-card figcaption {
+  position: absolute;
+  right: 14px;
+  bottom: 13px;
+  left: 14px;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--white);
+}
+.photo-card figcaption span {
+  color: var(--violet-bright);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+.photo-card figcaption strong {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: right;
+  text-transform: uppercase;
+}
 .player-leaders {
   display: grid;
   grid-template-columns: 1.45fr 1fr 1fr;
@@ -2417,6 +2480,17 @@ a {
   }
   .media-grid {
     grid-template-columns: 1fr 1fr;
+  }
+  .photo-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 145px;
+  }
+  .photo-card--featured {
+    grid-row: span 2;
+  }
+  .photo-card figcaption strong {
+    max-width: 92px;
+    font-size: 9px;
   }
   .admin-login h1 {
     font-size: 59px;

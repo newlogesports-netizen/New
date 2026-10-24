@@ -1838,10 +1838,7 @@ async function handler(req, res) {
   } catch (error) {
     console.error("[Vercel] App initialization failed", error);
     if (!res.headersSent) {
-      res.status(500).json({
-        error: "App initialization failed",
-        message: error instanceof Error ? error.message : "unknown error"
-      });
+      res.status(500).json({ error: "App initialization failed" });
     }
   }
 }

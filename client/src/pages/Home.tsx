@@ -23,42 +23,42 @@ import {
 
 const photoGallery = [
   {
-    src: "/manus-storage/IMG_20260831_124733_293_5c957e2e.jpg",
+    src: "/assets/newlog/teams/300-prime.png",
     alt: "Equipe reunida antes de uma partida",
     caption: "Jogo coletivo",
   },
   {
-    src: "/manus-storage/IMG_20260831_124733_089_46a6a13a.jpg",
+    src: "/assets/newlog/teams/atletico-gurizes.png",
     alt: "Jogador levantando o troféu ao lado da família",
     caption: "Memória que fica",
   },
   {
-    src: "/manus-storage/IMG_20260831_124733_294_bb09f60f.jpg",
+    src: "/assets/newlog/teams/coragem-nacional.png",
     alt: "Disputa de bola durante a partida",
     caption: "Disputa em campo",
   },
   {
-    src: "/manus-storage/IMG_20260831_124733_393_bbd86cff.jpg",
+    src: "/assets/newlog/teams/deportivo-santa-maria.png",
     alt: "Jogador conduzindo a bola em frente às bandeiras dos times",
     caption: "Cada rodada conta",
   },
   {
-    src: "/manus-storage/IMG_20260831_124733_423_95f5ffd7.jpg",
+    src: "/assets/newlog/teams/glv.png",
     alt: "Jogadores disputando a bola",
     caption: "A bola em jogo",
   },
   {
-    src: "/manus-storage/IMG_20260831_124733_580_4bfdf618.jpg",
+    src: "/assets/newlog/teams/madrid-fc.png",
     alt: "Dois jogadores comemorando durante a partida",
     caption: "Comunidade em campo",
   },
   {
-    src: "/manus-storage/IMG_20260831_124733_280_2af5a014.jpg",
+    src: "/assets/newlog/teams/mercenarios-fc.png",
     alt: "Jogador celebrando uma jogada",
     caption: "O momento da rodada",
   },
   {
-    src: "/manus-storage/IMG_20260831_124733_383_2eaca3a6.jpg",
+    src: "/assets/newlog/teams/murari-sports.png",
     alt: "Jogador comemorando no gramado",
     caption: "Histórias vivas",
   },
@@ -108,17 +108,17 @@ export default function Home() {
           <div className="hero__photo-collage">
             <img
               className="hero__photo hero__photo--main"
-              src="/manus-storage/IMG_20260831_124733_293_5c957e2e.jpg"
+              src="/assets/newlog/teams/peladeiros-fc.png"
               alt="Equipe reunida antes de uma partida da Newlog"
             />
             <img
               className="hero__photo hero__photo--top"
-              src="/manus-storage/IMG_20260831_124733_089_46a6a13a.jpg"
+              src="/assets/newlog/teams/pumas-fut-7.png"
               alt="Entrega de troféu em uma competição da Newlog"
             />
             <img
               className="hero__photo hero__photo--bottom"
-              src="/manus-storage/IMG_20260831_124733_294_bb09f60f.jpg"
+              src="/assets/newlog/teams/resenha-celestes.png"
               alt="Disputa de bola durante uma partida"
             />
             <div className="hero__photo-label">

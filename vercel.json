@@ -2,6 +2,7 @@
   "version": 2,
   "buildCommand": "pnpm build",
   "installCommand": "pnpm install --frozen-lockfile",
+  "outputDirectory": "dist/public",
   "functions": {
     "api/index.ts": {
       "maxDuration": 60,
@@ -10,6 +11,6 @@
   },
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/index.ts" },
-    { "source": "/(.*)", "destination": "/api/index.ts" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

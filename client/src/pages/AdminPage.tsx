@@ -10,6 +10,7 @@ import {
   Inbox,
   LayoutDashboard,
   LogIn,
+  Mail,
   List,
   Menu as MenuIcon,
   PenSquare,
@@ -24,7 +25,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
-import { startLogin } from "@/const";
+import { requestAdminMagicLink } from "@/lib/supabase";
 import { OFFICIAL_LOGO } from "@shared/newlogData";
 
 const adminSections = [
@@ -123,6 +124,26 @@ function AdminShell({
 }
 
 function LoginState() {
+  const [email, setEmail] = useState(
+    import.meta.env.VITE_ADMIN_EMAIL || "newlogesports@gmail.com"
+  );
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleLogin() {
+    setSending(true);
+    setError("");
+    try {
+      await requestAdminMagicLink(email.trim());
+      setSent(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível enviar o link.");
+    } finally {
+      setSending(false);
+    }
+  }
+
   return (
     <div className="admin-login">
       <div className="admin-login__mark">
@@ -131,12 +152,24 @@ function LoginState() {
       <span className="eyebrow">Área restrita</span>
       <h1>O arquivo por trás do site.</h1>
       <p>
-        Entre com sua conta Manus para editar páginas, configurações e conteúdo
-        publicado.
+        Entre com a conta autorizada do Supabase para editar páginas,
+        configurações e conteúdo publicado.
       </p>
-      <button className="button button--primary" onClick={() => startLogin()}>
-        <LogIn size={16} /> Entrar para administrar
+      <label className="admin-login__field">
+        <Mail size={16} />
+        <input
+          type="email"
+          value={email}
+          onChange={event => setEmail(event.target.value)}
+          placeholder="seu@email.com"
+          autoComplete="email"
+        />
+      </label>
+      <button className="button button--primary" onClick={handleLogin} disabled={sending || !email.includes("@")}>
+        <LogIn size={16} /> {sending ? "Enviando…" : "Enviar link de acesso"}
       </button>
+      {sent && <p className="admin-login__success">Link enviado. Confira o e-mail para entrar.</p>}
+      {error && <p className="admin-login__error">{error}</p>}
       <Link href="/" className="text-link">
         Voltar ao site <ArrowLeft size={15} />
       </Link>

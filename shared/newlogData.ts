@@ -1,4 +1,4 @@
-export const OFFICIAL_LOGO = "/manus-storage/logo-newlog_e6e17fc4.png";
+export const OFFICIAL_LOGO = "/assets/newlog/logo-newlog.png";
 export const INSTAGRAM_URL = "https://www.instagram.com/newlogesports";
 export const SOURCE_FILE = "COPANEWLOG-HISTÓRIA.xlsx";
 
@@ -27,14 +27,14 @@ export const ranking: RankingEntry[] = [
     points: 615,
     scores: [60, 80, 40, 10, 10, 30, 40, 60, 80, 80, 5, 80, 40],
     rank: 1,
-    logo: "/manus-storage/madrid-fc_77d055bb.png",
+    logo: "/assets/newlog/teams/madrid-fc.png",
   },
   {
     name: "ATLÉTICO GURIZES",
     points: 525,
     scores: [100, 60, 100, 15, 5, 50, null, 5, 100, 60, 20, null, 10],
     rank: 2,
-    logo: "/manus-storage/atletico-gurizes_80037e6f.png",
+    logo: "/assets/newlog/teams/atletico-gurizes.png",
   },
   {
     name: "RESENHA FTyP",
@@ -55,7 +55,7 @@ export const ranking: RankingEntry[] = [
       80,
     ],
     rank: 3,
-    logo: "/manus-storage/resenha-ftyp_737beb98.png",
+    logo: "/assets/newlog/teams/resenha-ftyp.png",
   },
   {
     name: "INIMIGOS DA BOLA",
@@ -69,21 +69,21 @@ export const ranking: RankingEntry[] = [
     points: 335,
     scores: [null, null, 20, 5, 60, null, null, 40, 40, null, 10, 60, 100],
     rank: 5,
-    logo: "/manus-storage/coragem-nacional_0d574987.png",
+    logo: "/assets/newlog/teams/coragem-nacional.png",
   },
   {
     name: "PUMAS FUT 7",
     points: 280,
     scores: [null, null, null, 30, 40, 20, 30, 20, null, 100, 40, null, null],
     rank: 6,
-    logo: "/manus-storage/pumas-fut-7_d0204dd8.png",
+    logo: "/assets/newlog/teams/pumas-fut-7.png",
   },
   {
     name: "DEPORTIVO SANTA MARIA",
     points: 250,
     scores: [40, 20, 80, null, null, 40, null, null, null, 40, 30, null, null],
     rank: 7,
-    logo: "/manus-storage/deportivo-santa-maria_4d5e633a.png",
+    logo: "/assets/newlog/teams/deportivo-santa-maria.png",
   },
   {
     name: "PELADEIROS FC",
@@ -104,7 +104,7 @@ export const ranking: RankingEntry[] = [
       null,
     ],
     rank: 8,
-    logo: "/manus-storage/peladeiros-fc_e2b2750d.png",
+    logo: "/assets/newlog/teams/peladeiros-fc.png",
   },
   {
     name: "300 PRIME",
@@ -125,7 +125,7 @@ export const ranking: RankingEntry[] = [
       null,
     ],
     rank: 9,
-    logo: "/manus-storage/300-prime_869af5d9.png",
+    logo: "/assets/newlog/teams/300-prime.png",
   },
   {
     name: "RESENHA CELESTES",
@@ -146,7 +146,7 @@ export const ranking: RankingEntry[] = [
       30,
     ],
     rank: 10,
-    logo: "/manus-storage/resenha-celestes_b34fbc4b.png",
+    logo: "/assets/newlog/teams/resenha-celestes.png",
   },
   {
     name: "GLV",
@@ -167,7 +167,7 @@ export const ranking: RankingEntry[] = [
       null,
     ],
     rank: 11,
-    logo: "/manus-storage/glv_86a76643.png",
+    logo: "/assets/newlog/teams/glv.png",
   },
   {
     name: "MERCENÁRIOS",
@@ -188,7 +188,7 @@ export const ranking: RankingEntry[] = [
       20,
     ],
     rank: 12,
-    logo: "/manus-storage/mercenarios-fc_945984e6.png",
+    logo: "/assets/newlog/teams/mercenarios-fc.png",
   },
   {
     name: "MURARI SPORTS",
@@ -209,7 +209,7 @@ export const ranking: RankingEntry[] = [
       60,
     ],
     rank: 13,
-    logo: "/manus-storage/murari-sports_009e6fb9.png",
+    logo: "/assets/newlog/teams/murari-sports.png",
   },
   {
     name: "TRUPE SM",
@@ -230,7 +230,7 @@ export const ranking: RankingEntry[] = [
       5,
     ],
     rank: 14,
-    logo: "/manus-storage/trupe-sm_b29aa5d9.png",
+    logo: "/assets/newlog/teams/trupe-sm.png",
   },
 ];
 export const historicalPlayers: Record<string, PlayerEntry[]> = {

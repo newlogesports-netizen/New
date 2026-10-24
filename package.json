@@ -4,7 +4,7 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_ENV=development tsx watch server/start.ts",
+    "dev": "NODE_ENV=development tsx watch server/dev-start.ts",
     "build": "vite build && esbuild server/start.ts --platform=node --packages=external --bundle --format=esm --outdir=dist && esbuild api/index.handler.ts --platform=node --packages=external --bundle --format=esm --outfile=api/index.js",
     "start": "NODE_ENV=production node dist/start.js",
     "check": "tsc --noEmit",

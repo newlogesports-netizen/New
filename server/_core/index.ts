@@ -6,7 +6,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { getMediaBlob } from "../db";
 
-export async function createApp(server?: import("http").Server) {
+export async function createApp(_server?: import("http").Server, options?: { useVite?: boolean }) {
   const app = express();
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
@@ -31,11 +31,7 @@ export async function createApp(server?: import("http").Server) {
     })
   );
   // development mode uses Vite, production mode uses static files
-  if (process.env.NODE_ENV === "development") {
-    if (!server) throw new Error("Development app requires an HTTP server");
-    const { setupVite } = await import("./vite");
-    await setupVite(app, server);
-  } else {
+  if (!options?.useVite) {
     const { serveStatic } = await import("./static");
     serveStatic(app);
   }

@@ -37,6 +37,9 @@ export function SiteHeader() {
     menu => menu.location === "primary"
   );
   const links = publicMenuItems(primaryMenu?.items);
+  const visibleLinks = links.some(item => item.href === "/arquivo")
+    ? links
+    : [...links, { label: "Arquivo completo", href: "/arquivo" }];
   return (
     <header className="site-header">
       <div className="site-header__inner shell">
@@ -50,7 +53,7 @@ export function SiteHeader() {
           className={`site-nav ${open ? "site-nav--open" : ""}`}
           aria-label="Navegação principal"
         >
-          {links.map(item => (
+          {visibleLinks.map(item => (
             <Link
               key={item.href}
               href={item.href}

@@ -381,7 +381,7 @@ export default function AdminPage() {
   const openNewPage = () => {
     setEditing(undefined);
     setPageTitle("Nova página");
-    setPageSlug("nova-pagina");
+    setPageSlug(`nova-pagina-${Date.now()}`);
     setPageExcerpt("");
     setPageText("");
     setPageBlockType("text");
@@ -467,7 +467,7 @@ export default function AdminPage() {
       seoTitle: pageTitle,
       seoDescription: pageExcerpt,
       blocks: pageBlocks.length
-        ? pageBlocks
+        ? pageBlocks.map(({ id: _id, ...block }) => block)
         : [{ type: pageBlockType as EditorBlockType, title: pageTitle, text: pageText, imageUrl: pageBlockImage || undefined, href: pageBlockHref || undefined }],
     });
   const handleSettings = async () => {

@@ -10,6 +10,7 @@ import {
   ArchivePage,
   CompetitionsPage,
   ContactPage,
+  CmsPage,
   HistoryPage,
   NotFoundPage,
   PlayersPage,
@@ -31,6 +32,7 @@ function PublicRouter() {
         <Route path="/copas" component={CompetitionsPage} />
         <Route path="/arquivo" component={ArchivePage} />
         <Route path="/contato" component={ContactPage} />
+        <Route path="/:slug" component={CmsPage} />
         <Route component={NotFoundPage} />
       </Switch>
     </SiteShell>

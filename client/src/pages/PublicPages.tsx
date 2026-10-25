@@ -11,7 +11,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useRoute } from "wouter";
 import { competitions, teamDirectory, workbookFacts } from "@shared/newlogData";
 import { workbookArchive } from "@shared/workbookArchive";
 import {
@@ -369,15 +369,15 @@ export function ArchivePage() {
   return (
     <>
       <PageIntro
-        kicker="Arquivo integral"
-        title="Tudo que está na planilha, aberto para consulta."
-        text="As oito abas da COPANEWLOG-HISTÓRIA.xlsx estão disponíveis célula a célula. Nenhum dado foi resumido, descartado ou substituído nesta área."
+        kicker="Histórico Newlog"
+        title="O conteúdo da história, organizado por capítulos."
+        text="Cada aba da fonte oficial virou uma seção editorial do site: convocados, rankings, tabelas, destaques e estatísticas aparecem em blocos de leitura, sem colar a planilha na página."
       />
       <section className="shell archive-page">
         <div className="archive-summary">
-          <div><strong>8</strong><span>abas oficiais</span></div>
-          <div><strong>{workbookArchive.reduce((sum, item) => sum + item.rowCount, 0)}</strong><span>linhas preservadas</span></div>
-          <div><strong>100%</strong><span>fonte original</span></div>
+          <div><strong>8</strong><span>capítulos históricos</span></div>
+          <div><strong>{workbookArchive.reduce((sum, item) => sum + item.rowCount, 0)}</strong><span>registros publicados</span></div>
+          <div><strong>0</strong><span>dados inventados</span></div>
         </div>
         <div className="archive-tabs" role="tablist" aria-label="Abas da planilha oficial">
           {workbookArchive.map(item => <button key={item.name} className={item.name === sheet?.name ? "is-active" : ""} onClick={() => { setSelectedSheet(item.name); setQuery(""); }}>{item.name}</button>)}
@@ -386,11 +386,40 @@ export function ArchivePage() {
           <label className="search-field"><Search size={16} /><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Buscar dentro desta aba" aria-label="Buscar na aba" /></label>
           <span className="toolbar__result"><FileSpreadsheet size={15} /> {filteredRows.length} de {sheet?.rowCount ?? 0} linhas</span>
         </div>
-        <div className="archive-sheet-head"><div><span className="eyebrow">Aba selecionada</span><h2>{sheet?.name}</h2></div><small>{sheet?.columnCount ?? 0} colunas · conteúdo preservado</small></div>
-        <div className="archive-table-wrap">
-          <table className="archive-table"><tbody>{filteredRows.map((row, rowIndex) => <tr key={`${rowIndex}-${row.join("|")}`}>{row.map((cell, cellIndex) => <td key={`${rowIndex}-${cellIndex}`} className={cell ? "has-value" : ""}>{cell || "—"}</td>)}</tr>)}</tbody></table>
+        <div className="archive-sheet-head"><div><span className="eyebrow">Capítulo selecionado</span><h2>{sheet?.name}</h2></div><small>{sheet?.rowCount ?? 0} registros organizados em conteúdo</small></div>
+        <div className="archive-editorial-grid">
+          {filteredRows.map((row, rowIndex) => {
+            const values = row.filter(Boolean);
+            if (!values.length) return null;
+            return <article className="archive-story-card" key={`${rowIndex}-${row.join("|")}`}><span className="archive-story-card__index">{String(rowIndex + 1).padStart(2, "0")}</span><div>{values.slice(0, 1).map(value => <h3 key={value}>{value}</h3>)}{values.slice(1).map((value, index) => <p key={`${value}-${index}`}>{value}</p>)}</div></article>;
+          })}
         </div>
-        <DataSourceNote>Fonte: COPANEWLOG-HISTÓRIA.xlsx. Esta visualização mantém a ordem e os vazios relevantes entre as células da planilha recebida.</DataSourceNote>
+        <DataSourceNote>Fonte: COPANEWLOG-HISTÓRIA.xlsx. O conteúdo está organizado para leitura no site; a planilha não é exibida como tabela colada.</DataSourceNote>
+      </section>
+    </>
+  );
+}
+
+export function CmsPage() {
+  const [, params] = useRoute("/:slug");
+  const snapshot = trpc.public.snapshot.useQuery(undefined, { staleTime: 10_000 });
+  const page = snapshot.data?.pages.find(item => item.slug === params?.slug);
+  if (!page) return <NotFoundPage />;
+  const blocks = Array.isArray(page.blocks) ? page.blocks : [];
+  return (
+    <>
+      <PageIntro kicker="Página publicada" title={page.title} text={page.excerpt ?? "Conteúdo publicado pela administração Newlog Esportes."} />
+      <section className="shell cms-page-content">
+        {blocks.map((rawBlock, index) => {
+          const block = rawBlock as { type?: string; title?: string; text?: string; imageUrl?: string; href?: string };
+          const key = `${page.id}-${index}`;
+          if (block.type === "hero") return <article className="cms-block cms-block--hero" key={key}><span className="eyebrow">NEWLOG ESPORTES</span><h2>{block.title || page.title}</h2><p>{block.text}</p></article>;
+          if (block.type === "heading") return <h2 className="cms-block cms-block--heading" key={key}>{block.title || block.text}</h2>;
+          if (block.type === "image" && block.imageUrl) return <figure className="cms-block cms-block--image" key={key}><img src={block.imageUrl} alt={block.title || page.title} /><figcaption>{block.text || block.title}</figcaption></figure>;
+          if (block.type === "button" && block.href) return <div className="cms-block cms-block--button" key={key}><Link className="button button--primary" href={block.href}>{block.title || "Saiba mais"}<ArrowUpRight size={16} /></Link></div>;
+          if (block.type === "separator") return <hr className="cms-block cms-block--separator" key={key} />;
+          return <article className="cms-block cms-block--text" key={key}><h3>{block.title}</h3><p>{block.text || ""}</p></article>;
+        })}
       </section>
     </>
   );

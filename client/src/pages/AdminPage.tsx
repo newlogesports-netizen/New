@@ -753,7 +753,7 @@ export default function AdminPage() {
             <div className="wp-editor">
               <div className="wp-editor__bar">
                 <div className="wp-editor__tabs"><button className="is-active">Editor visual</button><button>Configurações</button></div>
-                <div className="wp-editor__bar-actions"><span className="wp-save-state">Rascunho não salvo</span><button className="button button--outline" onClick={() => handleSavePage("draft")}><Save size={14} /> Salvar</button><button className="button button--primary" onClick={() => handleSavePage("published")}><CheckCircle2 size={14} /> Publicar</button></div>
+<div className="wp-editor__bar-actions"><span className="wp-save-state">Rota: /{pageSlug}</span><button className="button button--outline" onClick={() => handleSavePage("draft")}><Save size={14} /> Salvar rascunho</button><button className="button button--primary" onClick={() => handleSavePage("published")}><CheckCircle2 size={14} /> Criar rota e publicar</button></div>
               </div>
               <div className="wp-editor__body">
                 <aside className="wp-block-library">
@@ -764,7 +764,7 @@ export default function AdminPage() {
                   <div className="wp-library-help"><strong>Como editar</strong><span>Selecione um bloco no canvas. Arraste pelo ícone para reorganizar. Edite os detalhes no painel da direita.</span></div>
                 </aside>
                 <main className="wp-canvas-wrap">
-                  <div className="wp-canvas-toolbar"><label>Título da página<input value={pageTitle} onChange={event => setPageTitle(event.target.value)} /></label><button title="Pré-visualizar">◉ Visualizar</button></div>
+                  <div className="wp-canvas-toolbar"><label>Título da página<input value={pageTitle} onChange={event => setPageTitle(event.target.value)} /></label><label className="wp-route-field">Rota pública<input value={`/${pageSlug}`} onChange={event => setPageSlug(event.target.value.replace(/^\//, "").toLowerCase().replace(/[^a-z0-9-]+/g, "-"))} /></label><div className="wp-route-actions"><a href={`/${pageSlug}`} target="_blank" rel="noreferrer" title="Abrir rota pública">Abrir rota ↗</a><button title="Pré-visualizar">◉ Visualizar</button></div></div>
                   <div className="wp-canvas-page">
                     <input className="wp-page-title" value={pageTitle} onChange={event => setPageTitle(event.target.value)} placeholder="Adicionar título" />
                     <textarea className="wp-page-excerpt" rows={2} value={pageExcerpt} onChange={event => setPageExcerpt(event.target.value)} placeholder="Escreva uma descrição curta para esta página..." />

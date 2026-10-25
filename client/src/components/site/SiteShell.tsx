@@ -2,6 +2,7 @@ import { ArrowUpRight, Instagram, Menu, X } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { INSTAGRAM_URL, OFFICIAL_LOGO } from "@shared/newlogData";
+import { workbookSectionRoutes } from "@shared/workbookSections";
 import { trpc } from "@/lib/trpc";
 
 const WR_LOGO = "/assets/newlog/wr-icon.png";
@@ -14,6 +15,11 @@ const navItems = [
   ["Copas", "/copas"],
   ["Arquivo completo", "/arquivo"],
 ] as const;
+
+const workbookNavItems = workbookSectionRoutes.map(item => ({
+  label: item.label,
+  href: `/historico/${item.slug}`,
+}));
 
 function publicMenuItems(value: unknown) {
   const fallback = navItems.map(([label, href]) => ({ label, href }));
@@ -93,6 +99,29 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
+  );
+}
+
+export function SiteSidebar() {
+  return (
+    <aside className="site-sidebar" aria-label="Navegação do arquivo Newlog">
+      <Link href="/" className="site-sidebar__brand">
+        <img src={OFFICIAL_LOGO} alt="Newlog Esportes" />
+        <span>NEWLOG<small>ESPORTES</small></span>
+      </Link>
+      <div className="site-sidebar__label">Site institucional</div>
+      <nav className="site-sidebar__nav">
+        {navItems.slice(0, 5).map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
+      </nav>
+      <div className="site-sidebar__label">Abas da planilha</div>
+      <nav className="site-sidebar__nav site-sidebar__nav--archive">
+        {workbookNavItems.map(item => <Link key={item.href} href={item.href}>{item.label}</Link>)}
+      </nav>
+      <div className="site-sidebar__bottom">
+        <Link href="/arquivo">Visão geral do arquivo <ArrowUpRight size={13} /></Link>
+        <Link href="/admin" className="site-sidebar__admin">Abrir CMS <ArrowUpRight size={13} /></Link>
+      </div>
+    </aside>
   );
 }
 
@@ -178,9 +207,12 @@ export function SiteShell({ children }: { children: ReactNode }) {
   ]);
   return (
     <div className="site-shell">
-      <SiteHeader />
-      <main>{children}</main>
-      <SiteFooter />
+      <SiteSidebar />
+      <div className="site-shell__content">
+        <SiteHeader />
+        <main>{children}</main>
+        <SiteFooter />
+      </div>
     </div>
   );
 }

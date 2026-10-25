@@ -14,6 +14,7 @@ import { useState } from "react";
 import { Link, useRoute } from "wouter";
 import { competitions, teamDirectory, workbookFacts } from "@shared/newlogData";
 import { workbookArchive } from "@shared/workbookArchive";
+import { workbookSectionRoutes } from "@shared/workbookSections";
 import {
   DataSourceNote,
   PageIntro,
@@ -395,6 +396,28 @@ export function ArchivePage() {
           })}
         </div>
         <DataSourceNote>Fonte: COPANEWLOG-HISTÓRIA.xlsx. O conteúdo está organizado para leitura no site; a planilha não é exibida como tabela colada.</DataSourceNote>
+      </section>
+    </>
+  );
+}
+
+export function WorkbookSectionPage() {
+  const [, params] = useRoute("/historico/:section");
+  const route = workbookSectionRoutes.find(item => item.slug === params?.section);
+  const sheet = workbookArchive.find(item => item.name === route?.sheet);
+  const [query, setQuery] = useState("");
+  const rows = (sheet?.rows ?? []).filter(row => !query.trim() || row.join(" ").toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+  if (!route || !sheet) return <NotFoundPage />;
+  return (
+    <>
+      <PageIntro kicker="Aba histórica Newlog" title={route.label} text={route.intro} />
+      <section className="shell archive-section-page">
+        <div className="archive-section-toolbar"><label className="search-field"><Search size={16} /><input value={query} onChange={event => setQuery(event.target.value)} placeholder={`Buscar em ${route.label}`} /></label><span className="toolbar__result">{rows.length} registros</span></div>
+        <div className="archive-section-heading"><span className="eyebrow">Conteúdo completo desta aba</span><h2>{route.sheet}</h2><p>Informações convertidas em leitura editorial, mantendo os nomes, resultados e números recebidos.</p></div>
+        <div className="archive-editorial-grid">
+          {rows.map((row, rowIndex) => { const values = row.filter(Boolean); return values.length ? <article className="archive-story-card" key={`${rowIndex}-${row.join("|")}`}><span className="archive-story-card__index">{String(rowIndex + 1).padStart(2, "0")}</span><div><h3>{values[0]}</h3>{values.slice(1).map((value, index) => <p key={`${value}-${index}`}>{value}</p>)}</div></article> : null; })}
+        </div>
+        <DataSourceNote>Fonte oficial: COPANEWLOG-HISTÓRIA.xlsx · aba {route.sheet}.</DataSourceNote>
       </section>
     </>
   );

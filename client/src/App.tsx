@@ -16,6 +16,7 @@ import {
   PlayersPage,
   RankingPage,
   TeamsPage,
+  WorkbookSectionPage,
 } from "./pages/PublicPages";
 import { SiteShell } from "./components/site/SiteShell";
 
@@ -31,6 +32,7 @@ function PublicRouter() {
         <Route path="/jogadores" component={PlayersPage} />
         <Route path="/copas" component={CompetitionsPage} />
         <Route path="/arquivo" component={ArchivePage} />
+        <Route path="/historico/:section" component={WorkbookSectionPage} />
         <Route path="/contato" component={ContactPage} />
         <Route path="/:slug" component={CmsPage} />
         <Route component={NotFoundPage} />

@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import AdminPage from "./pages/AdminPage";
 import {
   AboutPage,
+  ArchivePage,
   CompetitionsPage,
   ContactPage,
   HistoryPage,
@@ -28,6 +29,7 @@ function PublicRouter() {
         <Route path="/times" component={TeamsPage} />
         <Route path="/jogadores" component={PlayersPage} />
         <Route path="/copas" component={CompetitionsPage} />
+        <Route path="/arquivo" component={ArchivePage} />
         <Route path="/contato" component={ContactPage} />
         <Route component={NotFoundPage} />
       </Switch>

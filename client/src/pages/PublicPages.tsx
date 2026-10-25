@@ -13,6 +13,7 @@ import {
 import { useState } from "react";
 import { Link } from "wouter";
 import { competitions, teamDirectory, workbookFacts } from "@shared/newlogData";
+import { workbookArchive } from "@shared/workbookArchive";
 import {
   DataSourceNote,
   PageIntro,
@@ -353,6 +354,43 @@ export function CompetitionsPage() {
           </div>
           <DataSourceNote>Fonte: TIMES E DESTAQUES DAS COPAS.</DataSourceNote>
         </div>
+      </section>
+    </>
+  );
+}
+
+export function ArchivePage() {
+  const [selectedSheet, setSelectedSheet] = useState(workbookArchive[0]?.name ?? "");
+  const [query, setQuery] = useState("");
+  const sheet = workbookArchive.find(item => item.name === selectedSheet) ?? workbookArchive[0];
+  const filteredRows = (sheet?.rows ?? []).filter(row =>
+    !query.trim() || row.join(" ").toLocaleLowerCase().includes(query.toLocaleLowerCase())
+  );
+  return (
+    <>
+      <PageIntro
+        kicker="Arquivo integral"
+        title="Tudo que está na planilha, aberto para consulta."
+        text="As oito abas da COPANEWLOG-HISTÓRIA.xlsx estão disponíveis célula a célula. Nenhum dado foi resumido, descartado ou substituído nesta área."
+      />
+      <section className="shell archive-page">
+        <div className="archive-summary">
+          <div><strong>8</strong><span>abas oficiais</span></div>
+          <div><strong>{workbookArchive.reduce((sum, item) => sum + item.rowCount, 0)}</strong><span>linhas preservadas</span></div>
+          <div><strong>100%</strong><span>fonte original</span></div>
+        </div>
+        <div className="archive-tabs" role="tablist" aria-label="Abas da planilha oficial">
+          {workbookArchive.map(item => <button key={item.name} className={item.name === sheet?.name ? "is-active" : ""} onClick={() => { setSelectedSheet(item.name); setQuery(""); }}>{item.name}</button>)}
+        </div>
+        <div className="archive-toolbar">
+          <label className="search-field"><Search size={16} /><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Buscar dentro desta aba" aria-label="Buscar na aba" /></label>
+          <span className="toolbar__result"><FileSpreadsheet size={15} /> {filteredRows.length} de {sheet?.rowCount ?? 0} linhas</span>
+        </div>
+        <div className="archive-sheet-head"><div><span className="eyebrow">Aba selecionada</span><h2>{sheet?.name}</h2></div><small>{sheet?.columnCount ?? 0} colunas · conteúdo preservado</small></div>
+        <div className="archive-table-wrap">
+          <table className="archive-table"><tbody>{filteredRows.map((row, rowIndex) => <tr key={`${rowIndex}-${row.join("|")}`}>{row.map((cell, cellIndex) => <td key={`${rowIndex}-${cellIndex}`} className={cell ? "has-value" : ""}>{cell || "—"}</td>)}</tr>)}</tbody></table>
+        </div>
+        <DataSourceNote>Fonte: COPANEWLOG-HISTÓRIA.xlsx. Esta visualização mantém a ordem e os vazios relevantes entre as células da planilha recebida.</DataSourceNote>
       </section>
     </>
   );

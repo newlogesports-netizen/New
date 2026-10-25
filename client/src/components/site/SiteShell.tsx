@@ -10,6 +10,7 @@ const navItems = [
   ["Times", "/times"],
   ["Jogadores", "/jogadores"],
   ["Copas", "/copas"],
+  ["Arquivo completo", "/arquivo"],
 ] as const;
 
 function publicMenuItems(value: unknown) {
@@ -116,6 +117,7 @@ export function SiteFooter() {
           <Link href="/historia">História</Link>
           <Link href="/ranking">Ranking geral</Link>
           <Link href="/times">Times</Link>
+          <Link href="/arquivo">Arquivo completo</Link>
           <Link href="/admin">Administração</Link>
         </div>
         <div className="footer-links">

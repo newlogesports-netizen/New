@@ -55,6 +55,19 @@ type EditorBlock = {
   href?: string;
 };
 
+const blockOptions: [EditorBlockType, string][] = [
+  ["heading", "Título"],
+  ["text", "Texto"],
+  ["hero", "Hero"],
+  ["image", "Imagem"],
+  ["gallery", "Galeria"],
+  ["button", "Botão"],
+  ["teams", "Times"],
+  ["news", "Notícias"],
+  ["events", "Eventos"],
+  ["separator", "Separador"],
+];
+
 function AdminShell({
   children,
   active,
@@ -201,6 +214,7 @@ export default function AdminPage() {
     { id: "block-1", type: "text", title: "", text: "" },
   ]);
   const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>("block-1");
   const [postEditing, setPostEditing] = useState<number | undefined>();
   const [postTitle, setPostTitle] = useState("Nova publicação");
   const [postSlug, setPostSlug] = useState("nova-publicacao");
@@ -373,7 +387,9 @@ export default function AdminPage() {
     setPageBlockType("text");
     setPageBlockImage("");
     setPageBlockHref("");
-    setPageBlocks([{ id: `block-${Date.now()}`, type: "text", title: "", text: "" }]);
+    const firstBlockId = `block-${Date.now()}`;
+    setPageBlocks([{ id: firstBlockId, type: "text", title: "", text: "" }]);
+    setSelectedBlockId(firstBlockId);
     setActive("pages");
   };
   const openPage = (page: (typeof pages)[number]) => {
@@ -399,7 +415,7 @@ export default function AdminPage() {
       typeof block?.imageUrl === "string" ? block.imageUrl : ""
     );
     setPageBlockHref(typeof block?.href === "string" ? block.href : "");
-    setPageBlocks(
+    const nextBlocks =
       Array.isArray(page.blocks) && page.blocks.length
         ? page.blocks.map((item, index) => {
             const value = item as Record<string, unknown>;
@@ -411,9 +427,10 @@ export default function AdminPage() {
               imageUrl: typeof value.imageUrl === "string" ? value.imageUrl : "",
               href: typeof value.href === "string" ? value.href : "",
             };
-          })
-        : [{ id: `block-${page.id}-0`, type: "text" as EditorBlockType, title: page.title, text: "" }]
-    );
+        })
+        : [{ id: `block-${page.id}-0`, type: "text" as EditorBlockType, title: page.title, text: "" }];
+    setPageBlocks(nextBlocks);
+    setSelectedBlockId(nextBlocks[0]?.id ?? null);
     setActive("pages");
   };
   const moveBlock = (fromId: string, toId: string) => {
@@ -427,11 +444,19 @@ export default function AdminPage() {
       return next;
     });
   };
-  const addBlock = () =>
-    setPageBlocks(current => [
-      ...current,
-      { id: `block-${Date.now()}`, type: pageBlockType as EditorBlockType, title: "", text: "" },
-    ]);
+  const addBlock = (type = pageBlockType as EditorBlockType) => {
+    const block = { id: `block-${Date.now()}`, type, title: "", text: "" };
+    setPageBlocks(current => [...current, block]);
+    setSelectedBlockId(block.id);
+  };
+  const updateBlock = (id: string | null, patch: Partial<EditorBlock>) => {
+    if (!id) return;
+    setPageBlocks(current => current.map(block => block.id === id ? { ...block, ...patch } : block));
+  };
+  const removeBlock = (id: string) => {
+    setPageBlocks(current => current.filter(block => block.id !== id));
+    setSelectedBlockId(current => current === id ? null : current);
+  };
   const handleSavePage = (status: "draft" | "published") =>
     savePage.mutate({
       id: editing,
@@ -725,134 +750,43 @@ export default function AdminPage() {
                 <ArrowLeft size={15} /> Voltar
               </button>
             </div>
-            <div className="editor-layout">
-              <div className="editor-canvas">
-                <label>
-                  Título
-                  <input
-                    value={pageTitle}
-                    onChange={event => setPageTitle(event.target.value)}
-                  />
-                </label>
-                <label>
-                  Slug
-                  <input
-                    value={pageSlug}
-                    onChange={event => setPageSlug(event.target.value)}
-                  />
-                </label>
-                <label>
-                  Resumo
-                  <textarea
-                    rows={3}
-                    value={pageExcerpt}
-                    onChange={event => setPageExcerpt(event.target.value)}
-                  />
-                </label>
-                <label>
-                  Tipo de bloco
-                  <select
-                    value={pageBlockType}
-                    onChange={event => setPageBlockType(event.target.value)}
-                  >
-                    {[
-                      ["text", "Texto"],
-                      ["hero", "Hero"],
-                      ["heading", "Título"],
-                      ["image", "Imagem"],
-                      ["gallery", "Galeria"],
-                      ["banner", "Banner"],
-                      ["button", "Botão"],
-                      ["columns", "Colunas"],
-                      ["video", "Vídeo"],
-                      ["list", "Lista"],
-                      ["cards", "Cards"],
-                      ["teams", "Times"],
-                      ["news", "Notícias"],
-                      ["events", "Eventos"],
-                      ["social", "Redes sociais"],
-                      ["separator", "Separador"],
-                      ["spacer", "Espaçamento"],
-                      ["section", "Seção"],
-                    ].map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  Conteúdo do bloco
-                  <textarea
-                    rows={12}
-                    value={pageText}
-                    onChange={event => setPageText(event.target.value)}
-                    placeholder="Escreva o conteúdo desta seção..."
-                  />
-                </label>
-                <label>
-                  URL da imagem (opcional)
-                  <input
-                    value={pageBlockImage}
-                    onChange={event => setPageBlockImage(event.target.value)}
-                  />
-                </label>
-                <label>
-                  Link do bloco (opcional)
-                  <input
-                    value={pageBlockHref}
-                    onChange={event => setPageBlockHref(event.target.value)}
-                  />
-                </label>
-                <div className="block-stack">
-                  <div className="block-stack__header">
-                    <span className="eyebrow">Ordem dos blocos</span>
-                    <button type="button" className="text-link" onClick={addBlock}>Adicionar bloco</button>
-                  </div>
-                  {pageBlocks.map((block, index) => (
-                    <div
-                      className="block-row"
-                      key={block.id}
-                      draggable
-                      onDragStart={() => setDraggedBlockId(block.id)}
-                      onDragOver={event => event.preventDefault()}
-                      onDrop={() => {
-                        if (draggedBlockId) moveBlock(draggedBlockId, block.id);
-                        setDraggedBlockId(null);
-                      }}
-                    >
-                      <GripVertical size={16} />
-                      <span><b>{index + 1}. {block.type}</b><small>{block.title || block.text || "Bloco sem texto"}</small></span>
-                      <button type="button" aria-label="Remover bloco" onClick={() => setPageBlocks(current => current.filter(item => item.id !== block.id))}><Trash2 size={15} /></button>
-                    </div>
-                  ))}
-                </div>
-                <div className="editor-actions">
-                  <button
-                    className="button button--outline"
-                    onClick={() => handleSavePage("draft")}
-                    disabled={savePage.isPending}
-                  >
-                    <Save size={15} /> Salvar rascunho
-                  </button>
-                  <button
-                    className="button button--primary"
-                    onClick={() => handleSavePage("published")}
-                    disabled={savePage.isPending}
-                  >
-                    <CheckCircle2 size={15} /> Publicar
-                  </button>
-                </div>
+            <div className="wp-editor">
+              <div className="wp-editor__bar">
+                <div className="wp-editor__tabs"><button className="is-active">Editor visual</button><button>Configurações</button></div>
+                <div className="wp-editor__bar-actions"><span className="wp-save-state">Rascunho não salvo</span><button className="button button--outline" onClick={() => handleSavePage("draft")}><Save size={14} /> Salvar</button><button className="button button--primary" onClick={() => handleSavePage("published")}><CheckCircle2 size={14} /> Publicar</button></div>
               </div>
-              <aside className="editor-sidebar">
-                <span className="eyebrow">Páginas publicadas</span>
-                {pages.map(page => (
-                  <button onClick={() => openPage(page)} key={page.id}>
-                    <span>{page.title}</span>
-                    <ChevronRight size={15} />
-                  </button>
-                ))}
-              </aside>
+              <div className="wp-editor__body">
+                <aside className="wp-block-library">
+                  <div className="wp-panel-title"><span>Inserir bloco</span><small>Arraste ou clique</small></div>
+                  <div className="wp-block-library__grid">
+                    {blockOptions.map(([type, label]) => <button key={type} onClick={() => addBlock(type)}><span className={`wp-block-icon wp-block-icon--${type}`}>{type === "text" ? "T" : type === "image" ? "▧" : type === "button" ? "↗" : type === "separator" ? "—" : "+"}</span>{label}</button>)}
+                  </div>
+                  <div className="wp-library-help"><strong>Como editar</strong><span>Selecione um bloco no canvas. Arraste pelo ícone para reorganizar. Edite os detalhes no painel da direita.</span></div>
+                </aside>
+                <main className="wp-canvas-wrap">
+                  <div className="wp-canvas-toolbar"><label>Título da página<input value={pageTitle} onChange={event => setPageTitle(event.target.value)} /></label><button title="Pré-visualizar">◉ Visualizar</button></div>
+                  <div className="wp-canvas-page">
+                    <input className="wp-page-title" value={pageTitle} onChange={event => setPageTitle(event.target.value)} placeholder="Adicionar título" />
+                    <textarea className="wp-page-excerpt" rows={2} value={pageExcerpt} onChange={event => setPageExcerpt(event.target.value)} placeholder="Escreva uma descrição curta para esta página..." />
+                    <div className="wp-block-stack">
+                      {pageBlocks.map((block, index) => {
+                        const label = blockOptions.find(item => item[0] === block.type)?.[1] ?? block.type;
+                        return <div key={block.id} className={`wp-block-card ${selectedBlockId === block.id ? "is-selected" : ""}`} onClick={() => setSelectedBlockId(block.id)} draggable onDragStart={() => setDraggedBlockId(block.id)} onDragOver={event => event.preventDefault()} onDrop={() => { if (draggedBlockId) moveBlock(draggedBlockId, block.id); setDraggedBlockId(null); }}>
+                          <div className="wp-block-card__handle"><GripVertical size={16} /><span>{index + 1} · {label}</span><button onClick={event => { event.stopPropagation(); removeBlock(block.id); }} aria-label="Excluir bloco"><Trash2 size={14} /></button></div>
+                          <div className={`wp-block-preview wp-block-preview--${block.type}`}>
+                            {block.type === "heading" ? <h2>{block.title || "Título da seção"}</h2> : block.type === "image" ? <>{block.imageUrl ? <img src={block.imageUrl} alt={block.title || "Imagem"} /> : <div className="wp-empty-media">▧<span>Selecione uma imagem no painel</span></div>}</> : block.type === "separator" ? <hr /> : block.type === "button" ? <button className="button button--primary">{block.title || "Texto do botão"}</button> : block.type === "hero" ? <div className="wp-hero-preview"><span className="eyebrow">NEWLOG ESPORTES</span><h2>{block.title || "A história é feita rodada a rodada."}</h2><p>{block.text || "Uma seção de destaque para abrir a página."}</p></div> : <><strong>{block.title || label}</strong><p>{block.text || "Clique para editar este conteúdo."}</p></>}
+                          </div>
+                        </div>;
+                      })}
+                    </div>
+                    <button className="wp-add-block" onClick={() => addBlock()}><span>+</span> Adicionar bloco</button>
+                  </div>
+                </main>
+                <aside className="wp-inspector">
+                  <div className="wp-panel-title"><span>Configurar bloco</span><small>{selectedBlockId ? "Bloco selecionado" : "Selecione um bloco"}</small></div>
+                  {(() => { const selected = pageBlocks.find(block => block.id === selectedBlockId); if (!selected) return <div className="wp-inspector-empty">Clique em qualquer bloco do canvas para editar título, texto, imagem e link.</div>; return <div className="wp-inspector-form"><label>Tipo<select value={selected.type} onChange={event => updateBlock(selected.id, { type: event.target.value as EditorBlockType })}>{blockOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label>Título<input value={selected.title ?? ""} onChange={event => updateBlock(selected.id, { title: event.target.value })} placeholder="Título do bloco" /></label><label>Texto<textarea rows={7} value={selected.text ?? ""} onChange={event => updateBlock(selected.id, { text: event.target.value })} placeholder="Conteúdo do bloco" /></label><label>Imagem<input value={selected.imageUrl ?? ""} onChange={event => updateBlock(selected.id, { imageUrl: event.target.value })} placeholder="/assets/newlog/..." /></label><label>Link<input value={selected.href ?? ""} onChange={event => updateBlock(selected.id, { href: event.target.value })} placeholder="https://..." /></label><button className="wp-delete-block" onClick={() => removeBlock(selected.id)}><Trash2 size={14} /> Excluir este bloco</button></div>; })()}
+                </aside>
+              </div>
             </div>
           </div>
         )}

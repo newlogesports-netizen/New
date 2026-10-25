@@ -1,8 +1,10 @@
-import { ArrowUpRight, Instagram, Menu, Shield, X } from "lucide-react";
+import { ArrowUpRight, Instagram, Menu, X } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { INSTAGRAM_URL, OFFICIAL_LOGO } from "@shared/newlogData";
 import { trpc } from "@/lib/trpc";
+
+const WR_LOGO = "/assets/newlog/wr-icon.png";
 
 const navItems = [
   ["História", "/historia"],
@@ -133,11 +135,11 @@ export function SiteFooter() {
           </span>
         </div>
       </div>
-      <div className="shell site-footer__bottom">
+          <div className="shell site-footer__bottom">
         <span>© {new Date().getFullYear()} Newlog Esportes</span>
-        <span className="footer-watermark">
-          <Shield size={12} /> Marca-d'água da desenvolvedora não configurada
-        </span>
+            <span className="footer-watermark">
+              <img src={WR_LOGO} alt="WR" /> Desenvolvido por WR
+            </span>
       </div>
     </footer>
   );

@@ -2865,3 +2865,6 @@ a {
 .cms-block--separator { border:0; border-top:2px solid var(--violet); }
 .cms-block--button { padding:15px 0; }
 @media (max-width:700px) { .archive-editorial-grid { grid-template-columns:1fr; } .cms-block--hero { padding:28px 22px; } .cms-block--hero h2 { font-size:40px; } }
+
+.footer-watermark { display:inline-flex; align-items:center; gap:8px; }
+.footer-watermark img { width:24px; height:22px; object-fit:contain; filter:brightness(0) invert(1); opacity:.82; }

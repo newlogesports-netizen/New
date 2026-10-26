@@ -1649,8 +1649,8 @@ var blockInput = z2.object({
   ]),
   title: z2.string().max(200).optional(),
   text: z2.string().max(5e3).optional(),
-  imageUrl: z2.string().max(500).optional(),
-  href: z2.string().max(500).optional(),
+  imageUrl: z2.string().max(2048).optional(),
+  href: z2.string().max(2048).optional(),
   label: z2.string().max(120).optional()
 }).strict();
 var pageInput = z2.object({

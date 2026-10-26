@@ -215,6 +215,9 @@ export default function AdminPage() {
   ]);
   const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>("block-1");
+  const [editorTab, setEditorTab] = useState<"visual" | "settings">("visual");
+  const [pageSeoTitle, setPageSeoTitle] = useState("");
+  const [pageSeoDescription, setPageSeoDescription] = useState("");
   const [postEditing, setPostEditing] = useState<number | undefined>();
   const [postTitle, setPostTitle] = useState("Nova publicação");
   const [postSlug, setPostSlug] = useState("nova-publicacao");
@@ -387,6 +390,9 @@ export default function AdminPage() {
     setPageBlockType("text");
     setPageBlockImage("");
     setPageBlockHref("");
+    setPageSeoTitle("");
+    setPageSeoDescription("");
+    setEditorTab("visual");
     const firstBlockId = `block-${Date.now()}`;
     setPageBlocks([{ id: firstBlockId, type: "text", title: "", text: "" }]);
     setSelectedBlockId(firstBlockId);
@@ -397,6 +403,10 @@ export default function AdminPage() {
     setPageTitle(page.title);
     setPageSlug(page.slug);
     setPageExcerpt(page.excerpt ?? "");
+    setPageSeoTitle(typeof page.seoTitle === "string" ? page.seoTitle : page.title);
+    setPageSeoDescription(
+      typeof page.seoDescription === "string" ? page.seoDescription : page.excerpt ?? ""
+    );
     const block = Array.isArray(page.blocks)
       ? (page.blocks.find(
           item => typeof item === "object" && item && "text" in item
@@ -431,6 +441,7 @@ export default function AdminPage() {
         : [{ id: `block-${page.id}-0`, type: "text" as EditorBlockType, title: page.title, text: "" }];
     setPageBlocks(nextBlocks);
     setSelectedBlockId(nextBlocks[0]?.id ?? null);
+    setEditorTab("visual");
     setActive("pages");
   };
   const moveBlock = (fromId: string, toId: string) => {
@@ -464,8 +475,8 @@ export default function AdminPage() {
       slug: pageSlug,
       excerpt: pageExcerpt,
       status,
-      seoTitle: pageTitle,
-      seoDescription: pageExcerpt,
+      seoTitle: pageSeoTitle || pageTitle,
+      seoDescription: pageSeoDescription || pageExcerpt,
       blocks: pageBlocks.length
         ? pageBlocks.map(({ id: _id, ...block }) => block)
         : [{ type: pageBlockType as EditorBlockType, title: pageTitle, text: pageText, imageUrl: pageBlockImage || undefined, href: pageBlockHref || undefined }],
@@ -752,10 +763,25 @@ export default function AdminPage() {
             </div>
             <div className="wp-editor">
               <div className="wp-editor__bar">
-                <div className="wp-editor__tabs"><button className="is-active">Editor visual</button><button>Configurações</button></div>
-<div className="wp-editor__bar-actions"><span className="wp-save-state">Rota: /{pageSlug}</span><button className="button button--outline" onClick={() => handleSavePage("draft")}><Save size={14} /> Salvar rascunho</button><button className="button button--primary" onClick={() => handleSavePage("published")}><CheckCircle2 size={14} /> Criar rota e publicar</button></div>
+                <div className="wp-editor__tabs"><button className={editorTab === "visual" ? "is-active" : ""} onClick={() => setEditorTab("visual")}>Editor visual</button><button className={editorTab === "settings" ? "is-active" : ""} onClick={() => setEditorTab("settings")}>Configurações</button></div>
+	<div className="wp-editor__bar-actions"><span className="wp-save-state">Rota: /{pageSlug}</span><button className="button button--outline" onClick={() => handleSavePage("draft")}><Save size={14} /> Salvar rascunho</button><button className="button button--primary" onClick={() => handleSavePage("published")}><CheckCircle2 size={14} /> Criar rota e publicar</button></div>
               </div>
-              <div className="wp-editor__body">
+              {editorTab === "settings" && <div className="wp-editor__settings">
+                <div className="wp-settings-card">
+                  <span className="eyebrow">Configurações da página</span>
+                  <h3>Controle como esta página aparece e é encontrada.</h3>
+                  <label>Título da página<input value={pageTitle} onChange={event => setPageTitle(event.target.value)} /></label>
+                  <label>Rota pública<input value={`/${pageSlug}`} onChange={event => setPageSlug(event.target.value.replace(/^\//, "").toLowerCase().replace(/[^a-z0-9-]+/g, "-"))} /><small>Use apenas letras minúsculas, números e hífens.</small></label>
+                  <label>Resumo<textarea rows={4} maxLength={500} value={pageExcerpt} onChange={event => setPageExcerpt(event.target.value)} placeholder="Descrição curta da página" /><small>{pageExcerpt.length}/500</small></label>
+                </div>
+                <div className="wp-settings-card">
+                  <span className="eyebrow">SEO</span>
+                  <h3>Prévia para mecanismos de busca.</h3>
+                  <label>Título SEO<input maxLength={180} value={pageSeoTitle} onChange={event => setPageSeoTitle(event.target.value)} placeholder={pageTitle} /><small>{pageSeoTitle.length}/180</small></label>
+                  <label>Descrição SEO<textarea rows={5} maxLength={320} value={pageSeoDescription} onChange={event => setPageSeoDescription(event.target.value)} placeholder={pageExcerpt || "Descrição para resultados de busca"} /><small>{pageSeoDescription.length}/320</small></label>
+                </div>
+              </div>}
+              <div className={`wp-editor__body ${editorTab === "settings" ? "is-hidden" : ""}`}>
                 <aside className="wp-block-library">
                   <div className="wp-panel-title"><span>Inserir bloco</span><small>Arraste ou clique</small></div>
                   <div className="wp-block-library__grid">

@@ -29,8 +29,8 @@ const blockInput = z
     ]),
     title: z.string().max(200).optional(),
     text: z.string().max(5000).optional(),
-    imageUrl: z.string().max(500).optional(),
-    href: z.string().max(500).optional(),
+    imageUrl: z.string().max(2048).optional(),
+    href: z.string().max(2048).optional(),
     label: z.string().max(120).optional(),
   })
   .strict();
